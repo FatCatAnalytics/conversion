@@ -1,0 +1,782 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>CLAidMap</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="CLAidMap.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">classdef</span> CLAidMap
+    <span class="comment">%UNTITLED2 Summary of this class goes here</span>
+    <span class="comment">%   Detailed explanation goes here</span>
+
+    <span class="keyword">properties</span>
+        borID           <span class="comment">% Borrower ID table consists of two variables:</span>
+                        <span class="comment">%   borrower_ID:    the categorical ID provided in</span>
+                        <span class="comment">%                   the raw data and</span>
+                        <span class="comment">%   borrower_IDNum: the numerical ids corresponding</span>
+                        <span class="comment">%                   to each borrower_ID</span>
+
+        facID           <span class="comment">% Facility ID table consists of two variables:</span>
+                        <span class="comment">%   Facility_ID:    the categorical ID provided in</span>
+                        <span class="comment">%                   the raw data and</span>
+                        <span class="comment">%   Facility_IDNum: the numerical ids corresponding</span>
+                        <span class="comment">%                   to each Facility_ID</span>
+
+        lonID           <span class="comment">% Loan ID table consists of two variables:</span>
+                        <span class="comment">%   Loan_ID:        the categorical ID provided in</span>
+                        <span class="comment">%                   the raw data and</span>
+                        <span class="comment">%   Loan_IDNum:     the numerical ids corresponding</span>
+                        <span class="comment">%                   to each Loan_ID</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">methods</span>
+        <span class="keyword">function</span> obj = CLAidMap(varargin)
+            <span class="comment">% CLAidMap Construct an instance of this class</span>
+            <span class="comment">%</span>
+            <span class="comment">% the CLAidMap is created from one or more *_RAW data tables.</span>
+            <span class="comment">% It is important to *NOTE* that this creates a brand new</span>
+            <span class="comment">% CLAidMap, that will only consist of the ids in the input</span>
+            <span class="comment">% arguments.</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Check Arguments ---------------------------------------------</span>
+            vnCheck = false(1,3);
+            <span class="keyword">for</span> a = 1:length(varargin)
+                arg = varargin{a};
+                s = inputname(a);
+                <span class="keyword">if</span> isempty(s)
+                    s = char(num2str(a));
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check that the argument is a table</span>
+                <span class="keyword">if</span> ~strcmpi(class(arg),<span class="string">'table'</span>)
+                    error(sprintf([<span class="string">'CLAidMap: Incorrect class of input '</span> <span class="keyword">...</span>
+                        <span class="string">'argument. Argument: %s, is not a table, all input '</span> <span class="keyword">...</span>
+                        <span class="string">'arguments must be tables.\n'</span>],s))
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check for variables named 'borrower_ID', 'Loan_ID', and</span>
+                <span class="comment">% 'Facilities_ID'</span>
+                vn = arg.Properties.VariableNames;
+                idfields = {<span class="string">'borrower_ID'</span>, <span class="string">'Loan_ID'</span>,<span class="string">'Facility_ID'</span>};
+                [hasfields,fieldlocs] = ismember(idfields,vn);
+                <span class="keyword">if</span> ~any(hasfields)
+                    error(sprintf([<span class="string">'CLAidMap: input table %s does not have '</span> <span class="keyword">...</span>
+                        <span class="string">'any id fields.\n'</span>],s))
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check that the variables are categorical</span>
+                idfieldlocs = fieldlocs(hasfields);
+                <span class="keyword">for</span> f = 1:length(idfieldlocs)
+                    idfieldloc = idfieldlocs(f);
+                    <span class="keyword">if</span> ~iscategorical(arg{:,idfieldloc})
+                        error(sprintf([<span class="string">'an id field in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+
+                <span class="comment">% Add to the variable name check to the variable name check</span>
+                <span class="comment">% cellstring</span>
+                vnCheck = max(hasfields,vnCheck);
+
+                <span class="comment">% make sure that the fields are all categoricals</span>
+
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> ~all(vnCheck)
+                missingfields = idfields(~vnCheck);
+                error(sprintf(<span class="string">'None of the input tables include %s.\n'</span>,<span class="keyword">...</span>
+                    strjoin(missingfields,<span class="string">", "</span>)));
+
+            <span class="keyword">end</span>
+
+            <span class="comment">% Arguments OK</span>
+
+            <span class="comment">% Create ID lists ---------------------------------------------</span>
+            <span class="comment">% Loop through each of the input tables and collect all of the</span>
+            <span class="comment">% id variables.</span>
+            Loan_ID = [];
+            Facility_ID = [];
+            borrower_ID = [];
+            <span class="keyword">for</span> a = 1:length(varargin)
+                T = varargin{a};
+                <span class="keyword">if</span> ismember(<span class="string">'Loan_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.Loan_ID)
+                        Loan_ID = [Loan_ID;T.Loan_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'Loan_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> ismember(<span class="string">'Facility_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.Facility_ID)
+                        Facility_ID = [Facility_ID;T.Facility_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'Loan_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> ismember(<span class="string">'borrower_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.borrower_ID)
+                        borrower_ID = [borrower_ID;T.borrower_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'borrower_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Create the Borower ID table (borID property) ----------------</span>
+            borrower_IDs = unique(borrower_ID);
+            borrower_IDs(ismissing(borrower_IDs)) = [];
+            borrower_IDNums = [1:length(borrower_IDs)]';
+            obj.borID = [array2table(borrower_IDs,<span class="string">'VariableNames'</span>,{<span class="string">'borrower_ID'</span>}),<span class="keyword">...</span>
+                array2table(borrower_IDNums,<span class="string">'VariableNames'</span>,{<span class="string">'borrower_IDNum'</span>})];
+
+            <span class="comment">% Create the Facility ID table (facID property) ---------------</span>
+            Facility_IDs = unique(Facility_ID);
+            Facility_IDs(ismissing(Facility_IDs)) = [];
+            Facility_IDNums = [1:length(Facility_IDs)]';
+            obj.facID = [array2table(Facility_IDs,<span class="string">'VariableNames'</span>,{<span class="string">'Facility_ID'</span>}),<span class="keyword">...</span>
+                array2table(Facility_IDNums,<span class="string">'VariableNames'</span>,{<span class="string">'Facility_IDNum'</span>})];
+
+            <span class="comment">% Create the Loan ID table (lonID property) -------------------</span>
+            Loan_IDs = unique(Loan_ID);
+            Loan_IDs(ismissing(Loan_IDs)) = [];
+            Loan_IDNums = [1:length(Loan_IDs)]';
+            obj.lonID = [array2table(Loan_IDs,<span class="string">'VariableNames'</span>,{<span class="string">'Loan_ID'</span>}),<span class="keyword">...</span>
+                array2table(Loan_IDNums,<span class="string">'VariableNames'</span>,{<span class="string">'Loan_IDNum'</span>})];
+
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> [obj,numLoanID2add,numFacilityID2add,numborrowerID2add] = updateIdMap(obj,varargin)
+            <span class="comment">% updateIdMap</span>
+            <span class="comment">%</span>
+            <span class="comment">%   Adds IDs to an existing ID map.  IDs that are already</span>
+            <span class="comment">%   represented in the ID map are untouched.</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Initialize outputs</span>
+            numLoanID2add = 0;
+            numFacilityID2add = 0;
+            numborrowerID2add = 0;
+
+            <span class="comment">% Check Arguments ---------------------------------------------</span>
+
+            <span class="keyword">for</span> a = 1:length(varargin)
+                arg = varargin{a};
+                s = inputname(a);
+                <span class="keyword">if</span> isempty(s)
+                    s = char(num2str(a));
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check that the argument is a table</span>
+                <span class="keyword">if</span> ~strcmpi(class(arg),<span class="string">'table'</span>)
+                    error(sprintf([<span class="string">'CLAidMap: Incorrect class of input '</span> <span class="keyword">...</span>
+                        <span class="string">'argument. Argument: %s, is not a table, all input '</span> <span class="keyword">...</span>
+                        <span class="string">'arguments must be tables.\n'</span>],s))
+                <span class="keyword">end</span>
+
+                <span class="comment">% Check for variables named 'borrower_ID', 'Loan_ID', and</span>
+                <span class="comment">% 'Facilities_ID'</span>
+                vn = arg.Properties.VariableNames;
+                idfields = {<span class="string">'borrower_ID'</span>, <span class="string">'Loan_ID'</span>,<span class="string">'Facility_ID'</span>};
+                [hasfields,fieldlocs] = ismember(idfields,vn);
+                <span class="keyword">if</span> ~any(hasfields)
+                    error(sprintf([<span class="string">'CLAidMap: input table %s does not have '</span> <span class="keyword">...</span>
+                        <span class="string">'any id fields.\n'</span>],s))
+                <span class="keyword">end</span>
+
+                <span class="comment">% make sure that the fields are all ID fields are</span>
+                <span class="comment">% categoricals (not numerical)</span>
+                idfieldlocs = fieldlocs(hasfields);
+                <span class="keyword">for</span> f = 1:length(idfieldlocs)
+                    idfieldloc = idfieldlocs(f);
+                    <span class="keyword">if</span> ~iscategorical(arg{:,idfieldloc})
+                        error(sprintf([<span class="string">'an id field in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% Arguments OK</span>
+
+            <span class="comment">% Create ID lists ---------------------------------------------</span>
+            <span class="comment">% Loop through each of the input tables and collect all of the</span>
+            <span class="comment">% id variables, even those that are currently in the idMap (we</span>
+            <span class="comment">% will get rid of duplicates later)</span>
+            Loan_ID = [];
+            Facility_ID = [];
+            borrower_ID = [];
+            <span class="keyword">for</span> a = 1:length(varargin)
+                T = varargin{a};
+                <span class="keyword">if</span> ismember(<span class="string">'Loan_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.Loan_ID)
+                        Loan_ID = [Loan_ID;T.Loan_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'Loan_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> ismember(<span class="string">'Facility_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.Facility_ID)
+                        Facility_ID = [Facility_ID;T.Facility_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'Loan_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> ismember(<span class="string">'borrower_ID'</span>,T.Properties.VariableNames)
+                    <span class="keyword">if</span> iscategorical(T.borrower_ID)
+                        borrower_ID = [borrower_ID;T.borrower_ID];
+                    <span class="keyword">else</span>
+                        error(sprintf([<span class="string">'borrower_ID in table: %s is not a '</span> <span class="keyword">...</span>
+                            <span class="string">'categorical variable.\n'</span>],inputname(a)))
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Identify the New IDs to Add (LOAN)</span>
+            <span class="keyword">if</span> ~isempty(Loan_ID)
+
+                Loan_ID = unique(Loan_ID);
+                Loan_ID(ismissing(Loan_ID)) = [];
+                Loan_ID_new = Loan_ID(~ismember(Loan_ID,obj.lonID.Loan_ID));
+
+                numLoanID2add = length(Loan_ID_new);
+                maxLoanIDNum = max(obj.lonID.Loan_IDNum);
+                <span class="keyword">if</span> numLoanID2add &gt; 0
+                    Loan_ID_new_Tab = [array2table(Loan_ID_new,<span class="string">'VariableNames'</span>,{<span class="string">'Loan_ID'</span>}),<span class="keyword">...</span>
+                        array2table([1:length(Loan_ID_new)]'+maxLoanIDNum,<span class="string">'VariableNames'</span>,{<span class="string">'Loan_IDNum'</span>})];
+                    obj.lonID = [obj.lonID;Loan_ID_new_Tab];
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+            <span class="comment">% Identify the New IDs to Add (FACILITY)</span>
+            <span class="keyword">if</span> ~isempty(Facility_ID)
+                Facility_ID = unique(Facility_ID);
+                Facility_ID(ismissing(Facility_ID)) = [];
+                Facility_ID_new = Facility_ID(~ismember(Facility_ID,obj.facID.Facility_ID));
+
+                numFacilityID2add = length(Facility_ID_new);
+                maxFacilityIDNum = max(obj.facID.Facility_IDNum);
+                <span class="keyword">if</span> numFacilityID2add &gt; 0
+                    Facility_ID_new_Tab = [array2table(Facility_ID_new,<span class="string">'VariableNames'</span>,{<span class="string">'Facility_ID'</span>}),<span class="keyword">...</span>
+                        array2table([1:length(Facility_ID_new)]'+maxFacilityIDNum, <span class="string">'Variablenames'</span>,{<span class="string">'Facility_IDNum'</span>})];
+                    obj.facID = [obj.facID;Facility_ID_new_Tab];
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+            <span class="comment">% Identify the New IDs to Add (BORROWER)</span>
+            <span class="keyword">if</span> ~isempty(borrower_ID)
+                borrower_ID = unique(borrower_ID);
+                borrower_ID(ismissing(borrower_ID)) = [];
+                borrower_ID_new = borrower_ID(~ismember(borrower_ID,obj.borID.borrower_ID));
+
+                numborrowerID2add = length(borrower_ID_new);
+                maxborrowerIDNum = max(obj.borID.borrower_IDNum);
+                <span class="keyword">if</span> numborrowerID2add &gt; 0
+                    borrower_ID_new_Tab = [array2table(borrower_ID_new,<span class="string">'VariableNames'</span>,{<span class="string">'borrower_ID'</span>}),<span class="keyword">...</span>
+                        array2table([1:length(borrower_ID_new)]'+maxborrowerIDNum,<span class="string">'VariableNames'</span>,{<span class="string">'borrower_IDNum'</span>})];
+                    obj.borID = [obj.borID; borrower_ID_new_Tab];
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> T_NEW = mapIDs(obj,T)
+            <span class="comment">%</span>
+            <span class="comment">% mapIDs</span>
+            <span class="comment">%  maps the id fields (Loan_ID, Facilty_ID, borrower_ID) from</span>
+            <span class="comment">%  the categorical to the numeric field based on the mapping</span>
+            <span class="comment">%  tables in the object.</span>
+            <span class="comment">%</span>
+            <span class="comment">%  Ids that cannot be found will be returned as NaNs</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            T_NEW = T;
+
+            <span class="comment">% Loan_ID</span>
+            <span class="keyword">if</span> ismember(<span class="string">'Loan_ID'</span>,T_NEW.Properties.VariableNames)
+
+                <span class="keyword">if</span> iscategorical(T_NEW.Loan_ID)
+                    T_NEW.Loan_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_loanid, locb_loanid] = ismember(T_NEW.Loan_ID,obj.lonID.Loan_ID);
+                    T_NEW.Loan_ID_NUM(ina_loanid) = obj.lonID.Loan_IDNum(locb_loanid(ina_loanid));
+                    T_NEW.Loan_ID = T_NEW.Loan_ID_NUM;
+                    T_NEW.Loan_ID_NUM = [];
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+            <span class="comment">% Facility_ID</span>
+            <span class="keyword">if</span> ismember(<span class="string">'Facility_ID'</span>,T_NEW.Properties.VariableNames)
+
+                <span class="keyword">if</span> iscategorical(T_NEW.Facility_ID)
+                    T_NEW.Facility_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_facid, locb_facid] = ismember(T_NEW.Facility_ID,obj.facID.Facility_ID);
+                    T_NEW.Facility_ID_NUM(ina_facid) = obj.facID.Facility_IDNum(locb_facid(ina_facid));
+                    T_NEW.Facility_ID = T_NEW.Facility_ID_NUM;
+                    T_NEW.Facility_ID_NUM = [];
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% borrower_ID</span>
+            <span class="keyword">if</span> ismember(<span class="string">'borrower_ID'</span>,T_NEW.Properties.VariableNames)
+
+                <span class="keyword">if</span> iscategorical(T_NEW.borrower_ID)
+                    T_NEW.borrower_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_borid, locb_borid] = ismember(T.borrower_ID,obj.borID.borrower_ID);
+                    T_NEW.borrower_ID_NUM(ina_borid) = obj.borID.borrower_IDNum(locb_borid(ina_borid));
+                    T_NEW.borrower_ID = T_NEW.borrower_ID_NUM;
+                    T_NEW.borrower_ID_NUM = [];
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+classdef CLAidMap
+    %UNTITLED2 Summary of this class goes here
+    %   Detailed explanation goes here
+
+    properties
+        borID           % Borrower ID table consists of two variables: 
+                        %   borrower_ID:    the categorical ID provided in 
+                        %                   the raw data and
+                        %   borrower_IDNum: the numerical ids corresponding
+                        %                   to each borrower_ID
+
+        facID           % Facility ID table consists of two variables: 
+                        %   Facility_ID:    the categorical ID provided in 
+                        %                   the raw data and
+                        %   Facility_IDNum: the numerical ids corresponding
+                        %                   to each Facility_ID
+        
+        lonID           % Loan ID table consists of two variables: 
+                        %   Loan_ID:        the categorical ID provided in 
+                        %                   the raw data and
+                        %   Loan_IDNum:     the numerical ids corresponding
+                        %                   to each Loan_ID
+    end
+
+    methods
+        function obj = CLAidMap(varargin)
+            % CLAidMap Construct an instance of this class
+            %
+            % the CLAidMap is created from one or more *_RAW data tables.
+            % It is important to *NOTE* that this creates a brand new
+            % CLAidMap, that will only consist of the ids in the input
+            % arguments.
+            %
+            %
+            %
+            
+            % Check Arguments REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            vnCheck = false(1,3);
+            for a = 1:length(varargin)
+                arg = varargin{a};
+                s = inputname(a);
+                if isempty(s)
+                    s = char(num2str(a));
+                end
+
+                % Check that the argument is a table
+                if ~strcmpi(class(arg),'table')
+                    error(sprintf(['CLAidMap: Incorrect class of input ' ...
+                        'argument. Argument: %s, is not a table, all input ' ...
+                        'arguments must be tables.\n'],s))
+                end
+
+                % Check for variables named 'borrower_ID', 'Loan_ID', and
+                % 'Facilities_ID'
+                vn = arg.Properties.VariableNames;
+                idfields = {'borrower_ID', 'Loan_ID','Facility_ID'};
+                [hasfields,fieldlocs] = ismember(idfields,vn);
+                if ~any(hasfields)
+                    error(sprintf(['CLAidMap: input table %s does not have ' ...
+                        'any id fields.\n'],s))
+                end
+
+                % Check that the variables are categorical
+                idfieldlocs = fieldlocs(hasfields);
+                for f = 1:length(idfieldlocs)
+                    idfieldloc = idfieldlocs(f);
+                    if ~iscategorical(arg{:,idfieldloc})
+                        error(sprintf(['an id field in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+                
+
+                % Add to the variable name check to the variable name check
+                % cellstring
+                vnCheck = max(hasfields,vnCheck);
+
+                % make sure that the fields are all categoricals
+
+            end
+            if ~all(vnCheck)
+                missingfields = idfields(~vnCheck);
+                error(sprintf('None of the input tables include %s.\n',...
+                    strjoin(missingfields,", ")));
+                
+            end
+
+            % Arguments OK
+
+            % Create ID lists REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            % Loop through each of the input tables and collect all of the
+            % id variables.
+            Loan_ID = [];
+            Facility_ID = [];
+            borrower_ID = [];
+            for a = 1:length(varargin)
+                T = varargin{a};
+                if ismember('Loan_ID',T.Properties.VariableNames)
+                    if iscategorical(T.Loan_ID)
+                        Loan_ID = [Loan_ID;T.Loan_ID];
+                    else
+                        error(sprintf(['Loan_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+                if ismember('Facility_ID',T.Properties.VariableNames)
+                    if iscategorical(T.Facility_ID)
+                        Facility_ID = [Facility_ID;T.Facility_ID];
+                    else
+                        error(sprintf(['Loan_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+                if ismember('borrower_ID',T.Properties.VariableNames)
+                    if iscategorical(T.borrower_ID)
+                        borrower_ID = [borrower_ID;T.borrower_ID];
+                    else
+                        error(sprintf(['borrower_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end                        
+                end
+            end
+
+            % Create the Borower ID table (borID property) REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            borrower_IDs = unique(borrower_ID);
+            borrower_IDs(ismissing(borrower_IDs)) = [];
+            borrower_IDNums = [1:length(borrower_IDs)]';
+            obj.borID = [array2table(borrower_IDs,'VariableNames',{'borrower_ID'}),...
+                array2table(borrower_IDNums,'VariableNames',{'borrower_IDNum'})];
+            
+            % Create the Facility ID table (facID property) REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Facility_IDs = unique(Facility_ID);
+            Facility_IDs(ismissing(Facility_IDs)) = [];
+            Facility_IDNums = [1:length(Facility_IDs)]';
+            obj.facID = [array2table(Facility_IDs,'VariableNames',{'Facility_ID'}),...
+                array2table(Facility_IDNums,'VariableNames',{'Facility_IDNum'})];
+
+            % Create the Loan ID table (lonID property) REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Loan_IDs = unique(Loan_ID);
+            Loan_IDs(ismissing(Loan_IDs)) = [];
+            Loan_IDNums = [1:length(Loan_IDs)]';
+            obj.lonID = [array2table(Loan_IDs,'VariableNames',{'Loan_ID'}),...
+                array2table(Loan_IDNums,'VariableNames',{'Loan_IDNum'})];
+
+
+
+            
+        end
+
+        function [obj,numLoanID2add,numFacilityID2add,numborrowerID2add] = updateIdMap(obj,varargin)
+            % updateIdMap
+            %
+            %   Adds IDs to an existing ID map.  IDs that are already 
+            %   represented in the ID map are untouched.
+            %
+
+            % Initialize outputs
+            numLoanID2add = 0;
+            numFacilityID2add = 0;
+            numborrowerID2add = 0;
+
+            % Check Arguments REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            for a = 1:length(varargin)
+                arg = varargin{a};
+                s = inputname(a);
+                if isempty(s)
+                    s = char(num2str(a));
+                end
+
+                % Check that the argument is a table
+                if ~strcmpi(class(arg),'table')
+                    error(sprintf(['CLAidMap: Incorrect class of input ' ...
+                        'argument. Argument: %s, is not a table, all input ' ...
+                        'arguments must be tables.\n'],s))
+                end
+
+                % Check for variables named 'borrower_ID', 'Loan_ID', and
+                % 'Facilities_ID'
+                vn = arg.Properties.VariableNames;
+                idfields = {'borrower_ID', 'Loan_ID','Facility_ID'};
+                [hasfields,fieldlocs] = ismember(idfields,vn);
+                if ~any(hasfields)
+                    error(sprintf(['CLAidMap: input table %s does not have ' ...
+                        'any id fields.\n'],s))
+                end
+
+                % make sure that the fields are all ID fields are 
+                % categoricals (not numerical)
+                idfieldlocs = fieldlocs(hasfields);
+                for f = 1:length(idfieldlocs)
+                    idfieldloc = idfieldlocs(f);
+                    if ~iscategorical(arg{:,idfieldloc})
+                        error(sprintf(['an id field in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+               
+
+            end
+
+
+            % Arguments OK
+
+            % Create ID lists REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            % Loop through each of the input tables and collect all of the
+            % id variables, even those that are currently in the idMap (we
+            % will get rid of duplicates later)
+            Loan_ID = [];
+            Facility_ID = [];
+            borrower_ID = [];
+            for a = 1:length(varargin)
+                T = varargin{a};
+                if ismember('Loan_ID',T.Properties.VariableNames)
+                    if iscategorical(T.Loan_ID)
+                        Loan_ID = [Loan_ID;T.Loan_ID];
+                    else
+                        error(sprintf(['Loan_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+                if ismember('Facility_ID',T.Properties.VariableNames)
+                    if iscategorical(T.Facility_ID)
+                        Facility_ID = [Facility_ID;T.Facility_ID];
+                    else
+                        error(sprintf(['Loan_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end
+                end
+                if ismember('borrower_ID',T.Properties.VariableNames)
+                    if iscategorical(T.borrower_ID)
+                        borrower_ID = [borrower_ID;T.borrower_ID];
+                    else
+                        error(sprintf(['borrower_ID in table: %s is not a ' ...
+                            'categorical variable.\n'],inputname(a)))
+                    end                        
+                end
+            end
+
+            % Identify the New IDs to Add (LOAN)
+            if ~isempty(Loan_ID)
+
+                Loan_ID = unique(Loan_ID);
+                Loan_ID(ismissing(Loan_ID)) = [];
+                Loan_ID_new = Loan_ID(~ismember(Loan_ID,obj.lonID.Loan_ID));
+
+                numLoanID2add = length(Loan_ID_new);
+                maxLoanIDNum = max(obj.lonID.Loan_IDNum);
+                if numLoanID2add > 0
+                    Loan_ID_new_Tab = [array2table(Loan_ID_new,'VariableNames',{'Loan_ID'}),...
+                        array2table([1:length(Loan_ID_new)]'+maxLoanIDNum,'VariableNames',{'Loan_IDNum'})];
+                    obj.lonID = [obj.lonID;Loan_ID_new_Tab];
+                end
+
+            end
+
+            % Identify the New IDs to Add (FACILITY)
+            if ~isempty(Facility_ID)
+                Facility_ID = unique(Facility_ID);
+                Facility_ID(ismissing(Facility_ID)) = [];
+                Facility_ID_new = Facility_ID(~ismember(Facility_ID,obj.facID.Facility_ID));
+
+                numFacilityID2add = length(Facility_ID_new);
+                maxFacilityIDNum = max(obj.facID.Facility_IDNum);
+                if numFacilityID2add > 0
+                    Facility_ID_new_Tab = [array2table(Facility_ID_new,'VariableNames',{'Facility_ID'}),...
+                        array2table([1:length(Facility_ID_new)]'+maxFacilityIDNum, 'Variablenames',{'Facility_IDNum'})];
+                    obj.facID = [obj.facID;Facility_ID_new_Tab];
+                end
+
+            end
+            
+            % Identify the New IDs to Add (BORROWER)
+            if ~isempty(borrower_ID)
+                borrower_ID = unique(borrower_ID);
+                borrower_ID(ismissing(borrower_ID)) = [];
+                borrower_ID_new = borrower_ID(~ismember(borrower_ID,obj.borID.borrower_ID));
+
+                numborrowerID2add = length(borrower_ID_new);
+                maxborrowerIDNum = max(obj.borID.borrower_IDNum);
+                if numborrowerID2add > 0
+                    borrower_ID_new_Tab = [array2table(borrower_ID_new,'VariableNames',{'borrower_ID'}),...
+                        array2table([1:length(borrower_ID_new)]'+maxborrowerIDNum,'VariableNames',{'borrower_IDNum'})];
+                    obj.borID = [obj.borID; borrower_ID_new_Tab];
+                end
+            end                
+        end
+    
+        function T_NEW = mapIDs(obj,T)
+            %
+            % mapIDs
+            %  maps the id fields (Loan_ID, Facilty_ID, borrower_ID) from
+            %  the categorical to the numeric field based on the mapping
+            %  tables in the object.
+            %
+            %  Ids that cannot be found will be returned as NaNs
+            % 
+            %
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            T_NEW = T;
+            
+            % Loan_ID
+            if ismember('Loan_ID',T_NEW.Properties.VariableNames) 
+
+                if iscategorical(T_NEW.Loan_ID)
+                    T_NEW.Loan_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_loanid, locb_loanid] = ismember(T_NEW.Loan_ID,obj.lonID.Loan_ID);
+                    T_NEW.Loan_ID_NUM(ina_loanid) = obj.lonID.Loan_IDNum(locb_loanid(ina_loanid));
+                    T_NEW.Loan_ID = T_NEW.Loan_ID_NUM;
+                    T_NEW.Loan_ID_NUM = [];
+                end
+
+            end
+
+            % Facility_ID
+            if ismember('Facility_ID',T_NEW.Properties.VariableNames)
+
+                if iscategorical(T_NEW.Facility_ID)
+                    T_NEW.Facility_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_facid, locb_facid] = ismember(T_NEW.Facility_ID,obj.facID.Facility_ID);
+                    T_NEW.Facility_ID_NUM(ina_facid) = obj.facID.Facility_IDNum(locb_facid(ina_facid));
+                    T_NEW.Facility_ID = T_NEW.Facility_ID_NUM;
+                    T_NEW.Facility_ID_NUM = [];
+                end
+            end
+
+            % borrower_ID
+            if ismember('borrower_ID',T_NEW.Properties.VariableNames)
+
+                if iscategorical(T_NEW.borrower_ID)
+                    T_NEW.borrower_ID_NUM = NaN(size(T_NEW,1),1);
+                    [ina_borid, locb_borid] = ismember(T.borrower_ID,obj.borID.borrower_ID);
+                    T_NEW.borrower_ID_NUM(ina_borid) = obj.borID.borrower_IDNum(locb_borid(ina_borid));
+                    T_NEW.borrower_ID = T_NEW.borrower_ID_NUM;
+                    T_NEW.borrower_ID_NUM = [];
+                end
+            end
+
+
+        end
+    
+    end
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

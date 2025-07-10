@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>geoTree2geoTab</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="geoTree2geoTab.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [LOCATIONS] = geoTree2geoTab(tree,TAXONOMYTABS)
+<span class="comment">%</span>
+<span class="comment">% geoTree2geoTab function creates table from tree (tree created in the app</span>
+<span class="comment">% by the user).</span>
+<span class="comment">%</span>
+
+<span class="comment">% Ignoring Geography</span>
+<span class="comment">% There are some clients who will want to ignore geography,</span>
+<span class="comment">% for this purpose, the user will either select no geographies,</span>
+<span class="comment">% or will only select US in the grid builder in the app.  In</span>
+<span class="comment">% these cases, the GRID.Geographies table will be empty when</span>
+<span class="comment">% constructed by the geoTree2geoTab function, or will have a single checked</span>
+<span class="comment">% node ('U.S.')</span>
+<span class="keyword">if</span> isscalar(tree.CheckedNodes)
+    <span class="keyword">if</span> strcmpi(tree.CheckedNodes.Text,<span class="string">"U.S."</span>)
+        outtabVn = {<span class="string">'Location_n_NameNational'</span>,<span class="string">'Location_n_NumberNational'</span>,<span class="string">'Geographies'</span>};
+        LOCATIONS = cell2table({categorical(<span class="string">"National"</span>),1,1},<span class="string">'VariableNames'</span>,outtabVn);
+        <span class="keyword">return</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Build the text file holding the text description of each geographic area</span>
+CHKD = tree.CheckedNodes;
+TXT = [];
+nchked = size(CHKD,1);
+<span class="keyword">for</span> n = 1:nchked
+    txt = string(CHKD(n).UserData);
+    TXT = [TXT;txt];
+<span class="keyword">end</span>
+
+<span class="comment">% Split the TXT strings into the Different Geographical Parts</span>
+geostrcell = arrayfun(@(x) strsplit(x,<span class="string">"_"</span>),TXT,<span class="string">'UniformOutput'</span>,false);
+
+<span class="comment">% We only keep the geographies that have the full list of geographical</span>
+<span class="comment">% features.</span>
+nums = cell2mat(arrayfun(@(x) size(x{:},2),geostrcell,<span class="string">'UniformOutput'</span>,false));
+idx_keepnums = nums==max(nums);
+geostrcell_keep = geostrcell(idx_keepnums);
+LOCATIONS = strings(size(geostrcell_keep,1),max(nums));
+<span class="keyword">for</span> g = 1:size(geostrcell_keep,1)
+
+    gc = geostrcell_keep{g};
+    LOCATIONS(g,:) = gc;
+
+<span class="keyword">end</span>
+LOCATIONS = array2table(categorical(LOCATIONS));
+
+<span class="comment">% Create Full Geography Tables</span>
+[T,~,~,LocVarsTab] = defGeographyTable(TAXONOMYTABS.LocationDatabase,<span class="keyword">...</span>
+    <span class="string">'LocNameVars'</span>,{<span class="string">'Location_r_NameRegion'</span>,<span class="string">'Location_Fed_NameFedBranch'</span>,<span class="string">'Location_s_NameState'</span>,<span class="string">'Location_mr_NameMetroRural'</span>,<span class="string">'Location_m_NameMSA'</span>});
+
+
+<span class="comment">% Find the geographic definitions and establish the varaible names for the</span>
+<span class="comment">% LOCATIONS table</span>
+remainingvariables = size(LOCATIONS,2);
+v = 1;
+<span class="keyword">while</span> remainingvariables &gt;0
+
+    <span class="comment">% Make sure we have a categorical variable</span>
+    vclass = class(LOCATIONS{:,v});
+
+    <span class="comment">% If there is no data in the variable, remove it</span>
+    <span class="keyword">if</span> strcmpi(vclass,<span class="string">'categorical'</span>)
+        <span class="keyword">if</span> all(ismissing(LOCATIONS{:,v}))
+            LOCATIONS(:,v) = [];
+            remainingvariables = remainingvariables-1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">% Find out which type of geographical variable it is</span>
+    <span class="keyword">for</span> Tv = 1:size(T,2)
+        <span class="keyword">if</span>(all(ismember(LOCATIONS{:,v},T{:,Tv})))
+            LOCATIONS.Properties.VariableNames{v} = T.Properties.VariableNames{Tv};
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    remainingvariables = remainingvariables -1;
+    v = v+1;
+<span class="keyword">end</span>
+
+<span class="comment">% Create the Geographies Field (the numerical IDs for each of the</span>
+<span class="comment">% Geographical Componants)</span>
+geographies = NaN(size(LOCATIONS));
+<span class="keyword">for</span> c = 1:size(LOCATIONS,2)
+
+    cn = LOCATIONS.Properties.VariableNames{c};
+    idvarn = char(LocVarsTab.LocIDVar(strcmpi(LocVarsTab.LocNameVar,cn)));
+    [~,locb_geocomponent] = ismember(LOCATIONS.(cn),TAXONOMYTABS.LocationDatabase.(cn));
+    LOCATIONS.(idvarn) = TAXONOMYTABS.LocationDatabase.(idvarn)(locb_geocomponent);
+    geographies(:,c) = TAXONOMYTABS.LocationDatabase.(idvarn)(locb_geocomponent);
+
+<span class="keyword">end</span>
+LOCATIONS.Geographies = geographies;
+
+
+
+
+
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [LOCATIONS] = geoTree2geoTab(tree,TAXONOMYTABS)
+%
+% geoTree2geoTab function creates table from tree (tree created in the app
+% by the user).
+%
+
+% Ignoring Geography
+% There are some clients who will want to ignore geography,
+% for this purpose, the user will either select no geographies, 
+% or will only select US in the grid builder in the app.  In
+% these cases, the GRID.Geographies table will be empty when
+% constructed by the geoTree2geoTab function, or will have a single checked
+% node ('U.S.')
+if isscalar(tree.CheckedNodes)
+    if strcmpi(tree.CheckedNodes.Text,"U.S.")
+        outtabVn = {'Location_n_NameNational','Location_n_NumberNational','Geographies'};
+        LOCATIONS = cell2table({categorical("National"),1,1},'VariableNames',outtabVn);
+        return
+    end
+end
+
+% Build the text file holding the text description of each geographic area
+CHKD = tree.CheckedNodes;
+TXT = [];
+nchked = size(CHKD,1);
+for n = 1:nchked
+    txt = string(CHKD(n).UserData);
+    TXT = [TXT;txt];
+end
+
+% Split the TXT strings into the Different Geographical Parts
+geostrcell = arrayfun(@(x) strsplit(x,"_"),TXT,'UniformOutput',false);
+
+% We only keep the geographies that have the full list of geographical
+% features.
+nums = cell2mat(arrayfun(@(x) size(x{:},2),geostrcell,'UniformOutput',false));
+idx_keepnums = nums==max(nums);
+geostrcell_keep = geostrcell(idx_keepnums);
+LOCATIONS = strings(size(geostrcell_keep,1),max(nums));
+for g = 1:size(geostrcell_keep,1)
+
+    gc = geostrcell_keep{g};
+    LOCATIONS(g,:) = gc;
+
+end
+LOCATIONS = array2table(categorical(LOCATIONS));
+
+% Create Full Geography Tables
+[T,~,~,LocVarsTab] = defGeographyTable(TAXONOMYTABS.LocationDatabase,...
+    'LocNameVars',{'Location_r_NameRegion','Location_Fed_NameFedBranch','Location_s_NameState','Location_mr_NameMetroRural','Location_m_NameMSA'});
+
+
+% Find the geographic definitions and establish the varaible names for the
+% LOCATIONS table
+remainingvariables = size(LOCATIONS,2);
+v = 1;
+while remainingvariables >0
+    
+    % Make sure we have a categorical variable
+    vclass = class(LOCATIONS{:,v});
+
+    % If there is no data in the variable, remove it
+    if strcmpi(vclass,'categorical')
+        if all(ismissing(LOCATIONS{:,v}))
+            LOCATIONS(:,v) = [];
+            remainingvariables = remainingvariables-1;
+        end
+    end
+
+    % Find out which type of geographical variable it is
+    for Tv = 1:size(T,2)
+        if(all(ismember(LOCATIONS{:,v},T{:,Tv})))
+            LOCATIONS.Properties.VariableNames{v} = T.Properties.VariableNames{Tv};
+        end
+    end
+
+    remainingvariables = remainingvariables -1;
+    v = v+1;
+end
+
+% Create the Geographies Field (the numerical IDs for each of the
+% Geographical Componants)
+geographies = NaN(size(LOCATIONS));
+for c = 1:size(LOCATIONS,2)
+
+    cn = LOCATIONS.Properties.VariableNames{c};
+    idvarn = char(LocVarsTab.LocIDVar(strcmpi(LocVarsTab.LocNameVar,cn)));
+    [~,locb_geocomponent] = ismember(LOCATIONS.(cn),TAXONOMYTABS.LocationDatabase.(cn));
+    LOCATIONS.(idvarn) = TAXONOMYTABS.LocationDatabase.(idvarn)(locb_geocomponent);
+    geographies(:,c) = TAXONOMYTABS.LocationDatabase.(idvarn)(locb_geocomponent);
+
+end
+LOCATIONS.Geographies = geographies;
+
+
+
+
+
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

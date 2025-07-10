@@ -1,0 +1,1486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>CLApopulatedGrid</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="CLApopulatedGrid.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">classdef</span> CLApopulatedGrid
+    <span class="comment">% CLApopulatedGrid</span>
+    <span class="comment">%</span>
+    <span class="comment">% Class object holds the fully populated grid (REQGRID_OUT) as well as</span>
+    <span class="comment">% some information related to the grid</span>
+    <span class="comment">%</span>
+    <span class="comment">% -------------------------------------------------------------</span>
+
+    <span class="keyword">properties</span>
+        Description         <span class="comment">% Brief description of the populated grid</span>
+        CreatedOn           <span class="comment">% Created on date (char)</span>
+
+        GRID                <span class="comment">% CLAgrid used in creating the populatedGrid</span>
+
+        OBS                 <span class="comment">% Observation table, created using the GimmeOBS</span>
+                            <span class="comment">% function associated with the DB Class Object</span>
+
+        dimensions          <span class="comment">% dimensions structure, created with GimmeOBS</span>
+                            <span class="comment">% function associated with the DB Class Object</span>
+
+        POPULATED_GRID      <span class="comment">% The full output requested grid table holding</span>
+                            <span class="comment">% the requested grid along with distances to</span>
+                            <span class="comment">% all of the observations</span>
+
+        Parameters          <span class="comment">% A structure holding the required simulation</span>
+                            <span class="comment">% parameters such as weights, and other factors.</span>
+                            <span class="comment">% The Parameters structure holds the following:</span>
+                            <span class="comment">% - Dimension Weights</span>
+                            <span class="comment">% - Smoothing Parameters</span>
+                            <span class="comment">%       - Min number of points</span>
+                            <span class="comment">%       - Initial Aperture</span>
+                            <span class="comment">%       - Distance Weight Factor</span>
+                            <span class="comment">% - Confidence Score Distance Weight</span>
+
+
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">methods</span>
+        <span class="keyword">function</span> obj = CLApopulatedGrid(GRID,varargin)
+            <span class="comment">% CLApopulatedGrid</span>
+            <span class="comment">%   Construct an instance of this class</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            <span class="comment">% SET GRID PROPERTY</span>
+            <span class="comment">% You always need to have an already created GRID to create a</span>
+            <span class="comment">% populatedGrid, so it is not a variable input argument</span>
+            obj.GRID = GRID;
+
+            <span class="comment">% CREATE POPULATED GRID PROPERTY</span>
+            <span class="comment">% Start with the REQGRID table from the unpopulated GRID, then</span>
+            <span class="comment">% add empty fields for the additional distance fields.</span>
+
+            <span class="comment">% if the REQTABLE in the Input GRID has not been built, create</span>
+            <span class="comment">% it here</span>
+            <span class="keyword">if</span> size(GRID.REQTABLE,1) &lt; 1
+                obj.GRID = obj.GRID.make_REQTABLE;
+            <span class="keyword">end</span>
+            obj.POPULATED_GRID = obj.GRID.REQTABLE;
+            obj.POPULATED_GRID.Distances = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.DistanceLables = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.DistanceWts = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.WtAvgDistance = NaN(size(obj.POPULATED_GRID,1),1);
+
+
+            <span class="comment">% SET UP INPUT PARSER</span>
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+
+            <span class="comment">% DESCRIPTION</span>
+            def = sprintf(<span class="string">"CLA Populated Grid created on %s"</span>,datetime());
+            defmsg = sprintf([<span class="string">'Problem with the populated grid description input. the '</span> <span class="keyword">...</span>
+                <span class="string">'description must be a string or char variable.'</span>]);
+            addParameter(p,<span class="string">'Description'</span>,def,<span class="keyword">...</span>
+                @(x)<span class="keyword">...</span>
+                assert(or(isstring(x),ischar(x)),<span class="keyword">...</span>
+                defmsg)<span class="keyword">...</span>
+                );
+
+
+            <span class="comment">% PARSE INPUTS AND SET RESULTS</span>
+            parse(p,varargin{:});
+            obj.Description = p.Results.Description;
+
+            <span class="comment">% DEFAULT SETTINGS FOR PARAMETERS</span>
+            obj.Parameters = struct();
+            obj.Parameters.DimWts = mkemptyDimWeightsTab();
+            obj.Parameters.Smoothing.MinNumPts = 20;
+            obj.Parameters.Smoothing.InitAper = 0.3;
+            obj.Parameters.Smoothing.DistWtFactor = 10;
+            obj.Parameters.ConfScorDistWt = 0.5;
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> obj = CalculateDistances(obj,varargin)
+            <span class="comment">% METHOD1 Summary of this method goes here</span>
+            <span class="comment">%   Detailed explanation goes here</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% RUN FROM OPTION</span>
+            def = <span class="string">''</span>;
+            defmsg = sprintf([<span class="string">'Problem with the run from option input. the '</span> <span class="keyword">...</span>
+                <span class="string">'description must be a string or a char'</span>]);
+            addParameter(p,<span class="string">'RunFrom'</span>,def);
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            <span class="comment">% Get the attributes</span>
+            attributes = fieldnames(obj.dimensions);
+
+            <span class="comment">% Get the number of gridpoints</span>
+            numGridPoints = size(obj.POPULATED_GRID,1);
+
+            <span class="comment">% WE'RE NOT CALCULATING THE FULL DISTANCE HERE</span>
+            <span class="comment">% MUST WAIT UNTIL THE USER HAS ENTERED WEIGHTS AND WE PICK THEM</span>
+            <span class="comment">% UP</span>
+
+            <span class="comment">% Set up RunFrom. In case we're not running this from the app,</span>
+            <span class="comment">% we insert a dummy structure for the RunFrom argument.</span>
+            <span class="keyword">if</span> isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText.Text = <span class="string">""</span>;
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack.Position = [1,2,3,4];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set waitbar</span>
+            f = waitbar(0,<span class="string">'calculating distances...'</span>);
+            f.WindowState = <span class="string">'Minimize'</span>;
+
+            <span class="comment">% We loop through, gridpoint by gridpoint, for each gridpoint we calculate</span>
+            <span class="comment">% the distance to all observations along each dimension (with respect to</span>
+            <span class="comment">% each attribute).</span>
+            <span class="keyword">for</span> gp = 1:numGridPoints
+
+                waitbar(gp/numGridPoints)
+
+                <span class="comment">% Return where we are to the app if applicable</span>
+                <span class="comment">%RunFrom.tempdata = gp/numGridPoints;</span>
+                RunFrom.Label_MyProgBarText.Text = sprintf(<span class="string">'%.3f Finished...'</span>,gp/numGridPoints);
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position(3) = RunFrom.Panel_MyProgBarBack.Position(3) *0.95 *gp/numGridPoints;
+                <span class="comment">%refresh(RunFrom.CLAInterpolatorUIFigure);</span>
+
+                <span class="comment">% Initialize the Distance Mat</span>
+                <span class="comment">% the distance matrix holds</span>
+                DistMatID = NaN(size(obj.OBS,1),length(attributes));
+                DistMatDist = NaN(size(obj.OBS,1),length(attributes));
+
+                <span class="keyword">for</span> a = 1:length(attributes)
+
+                    <span class="comment">% Initialize the Output matrix (dist) for the single attribute</span>
+                    <span class="comment">% dist is a two column matrix, the first column will hold the</span>
+                    <span class="comment">% observation number, and the second column will hold the distance</span>
+                    <span class="comment">% (with respect to the current attribute) from the gridpoint to the</span>
+                    <span class="comment">% observation.</span>
+                    dist = NaN(size(obj.OBS,1),2);
+
+                    <span class="comment">% Get the attribute &amp; distvar</span>
+                    attribute = attributes{a};
+                    distvar = obj.dimensions.(attribute).distvar;
+
+                    <span class="comment">% Find out if the attribute is a categorical attribute (in which case</span>
+                    <span class="comment">% we will find the hamming distance)</span>
+                    catvarflag = obj.GRID.Categoricals.IsCat(strcmpi(obj.GRID.Categoricals.Property,attribute));
+
+                    y = obj.POPULATED_GRID.(distvar)(gp,:);
+                    x = obj.OBS.(distvar);
+
+                    <span class="keyword">if</span> catvarflag
+                        DistType = <span class="string">'hamming'</span>;
+                    <span class="keyword">else</span>
+                        DistType = <span class="string">'euclidean'</span>;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">% Calculate the distances</span>
+                    <span class="comment">% knnsearch returns two vectors:</span>
+                    <span class="comment">%   D holds the distances from each point in x (the observations)</span>
+                    <span class="comment">%   to y (the requsted grid point), sorted in order closest to</span>
+                    <span class="comment">%   furthest.</span>
+                    <span class="comment">%   Idx holds the index for each point in x (the observations),</span>
+                    <span class="comment">%   sorted in order closest to furthest.</span>
+                    <span class="comment">%</span>
+
+                    D_raw = pdist2(y,x,DistType);
+                    D = D_raw ./ max(D_raw);
+                    dist(:,1) = obj.OBS.OBS_ID;
+                    dist(:,2) = D;
+
+                    <span class="comment">% Fill in DistMats (holds all distances for all attributes)</span>
+                    <span class="comment">% We have two distance matrices, DistMatID holds the IDs of each of</span>
+                    <span class="comment">% the observations.  To make sure we don't lose track of which</span>
+                    <span class="comment">% observation we are measuring, we list the IDs for each attribute.</span>
+                    <span class="comment">% So each column of DistMatID should be the same.</span>
+                    <span class="comment">%</span>
+                    <span class="comment">% DistMatDist holds the distances (for all attributes) of each</span>
+                    <span class="comment">% point in the observations table.</span>
+                    <span class="comment">%</span>
+                    DistMatID(:,a) = dist(:,1);
+                    DistMatDist(:,a) = dist(:,2);
+
+
+
+                <span class="keyword">end</span>
+
+                <span class="comment">% We have now looped through all of the attributes and DistMatDist</span>
+                <span class="comment">% holds the distances from the gridpoint to each observation for all</span>
+                <span class="comment">% attributes. We now calculate the weighted average spread using the</span>
+                <span class="comment">% weights vector we created above.</span>
+                <span class="comment">% AT THIS POINT WE JUST PUT IN A NAN PLACEHODER FOR THE</span>
+                <span class="comment">% WEIGHTED AVERAGE DISTANCE</span>
+                <span class="comment">% WAVGDIST = DistMatDist * wts;</span>
+                WAVGDIST = NaN(size(DistMatDist,1),1);
+
+                <span class="comment">% Get the observation Id column</span>
+                OBSIDS = DistMatID(:,1);
+
+                <span class="comment">% Get the Spread associated with the observations</span>
+                SPR = obj.OBS.SPR;
+
+                <span class="comment">% Check that the Observation IDs are all aligned properly</span>
+                CHK = all(all(DistMatID(:,[2:end]) == repmat(DistMatID(:,1),1,size(DistMatID,2)-1),2));
+                <span class="keyword">if</span> ~CHK
+                    fprintf(<span class="string">'ERROR: Ids not aligned for attribute %s\n.'</span>, attribute)
+                    <span class="keyword">return</span>
+                <span class="keyword">end</span>
+                CHK1 = all(DistMatID(:,1) == obj.OBS.OBS_ID);
+                <span class="keyword">if</span> ~CHK1
+                    fprintf(<span class="string">'ERROR: Ids not aligned for attribute %s\n.'</span>, attribute)
+                    <span class="keyword">return</span>
+                <span class="keyword">end</span>
+
+                <span class="comment">% Save the Distances and distance table lables (so that we can create a</span>
+                <span class="comment">% table easily and we don't forget how the columns line up) for the</span>
+                <span class="comment">% individual point</span>
+                distancelables = [{<span class="string">'ObsIds'</span>,<span class="string">'DistanceWtd'</span>,<span class="string">'SPR'</span>},attributes'];
+                distances = sortrows([OBSIDS,WAVGDIST,SPR,DistMatDist],2);
+                obj.POPULATED_GRID.Distances{gp} = distances;
+                obj.POPULATED_GRID.DistanceLables{gp} = distancelables;
+
+
+            <span class="keyword">end</span>
+            close(f)
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> obj = CalcGower(obj,varargin)
+            <span class="comment">% CalcGower</span>
+            <span class="comment">% Calculates the gower distance from each point in the cell to</span>
+            <span class="comment">% all observation points</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% RUN FROM OPTION</span>
+            def = <span class="string">''</span>;
+            defmsg = sprintf([<span class="string">'Problem with the run from option input. the '</span> <span class="keyword">...</span>
+                <span class="string">'run from option must be a string or a char'</span>]);
+            addParameter(p,<span class="string">'RunFrom'</span>,def);
+
+            <span class="comment">% WEIGHTS</span>
+            def = obj.GRID.Weights;
+            defmsg = sprintf([<span class="string">'Problem with the weightsTab input. the '</span> <span class="keyword">...</span>
+                <span class="string">'description must be a table'</span>]);
+            addParameter(p,<span class="string">'WeightsTab'</span>,def, @(x) istable(x));
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+            weightsTab = p.Results.WeightsTab;
+
+            <span class="comment">% Calculate the Gower Distance for All Cells to All Observations</span>
+            <span class="comment">% Initialize</span>
+            weights = weightsTab{<span class="string">"Scaled"</span>,:};
+            weightsVarNames = weightsTab.Properties.VariableNames;
+            numgridcells = size(obj.POPULATED_GRID,1);
+
+            <span class="comment">% Set up RunFrom. In case we're not running this from the app,</span>
+            <span class="comment">% we insert a dummy structure for the RunFrom argument.</span>
+            <span class="keyword">if</span> isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText.Text = <span class="string">""</span>;
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack.Position = [1,2,3,4];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set waitbar</span>
+            f = waitbar(0,<span class="string">'calculating distances...'</span>);
+            f.WindowState = <span class="string">'Minimize'</span>;
+
+            <span class="comment">% CALCULATE THE GOWER DISTANCE FOR ALL POINTS</span>
+            <span class="keyword">for</span> r = 1:numgridcells
+
+                waitbar(r/numgridcells)
+
+                <span class="comment">% Return where we are to the app if applicable</span>
+                <span class="comment">%RunFrom.tempdata = gp/numGridPoints;</span>
+                RunFrom.Label_MyProgBarText.Text = sprintf(<span class="string">'%.3f Finished...'</span>,r/numgridcells);
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0.00,0.45,0.74];
+                RunFrom.Label_MyProgBar_Front.Position(3) = RunFrom.Panel_MyProgBarBack.Position(3) *0.95 *r/numgridcells;
+
+                <span class="comment">% Identify the series (columns) that are associated with the distance</span>
+                <span class="comment">% dimensions.  The dimensions are listed in the variable names of the</span>
+                <span class="comment">% weights tab.</span>
+                DistLables = obj.POPULATED_GRID.DistanceLables{r};
+                [~,idx_DimensionCols] = ismember(weightsVarNames,DistLables);
+
+                <span class="comment">% Get the full distance matrix (includes fields like Observation Id,</span>
+                <span class="comment">% Spread, etc. other than just dimensional distances)</span>
+                m = obj.POPULATED_GRID.Distances{r};
+
+                <span class="comment">% Distances for Missing Values are set to 1 (the farthest distance</span>
+                <span class="comment">% posssible along that specific dimension).</span>
+                m(isnan(m)) = 1;
+
+                <span class="comment">% Separate out the dimensional distances from the other fields in the</span>
+                <span class="comment">% distance matrix.</span>
+                d = m(:,idx_DimensionCols);
+
+                <span class="comment">% Calculate the distance using the modified gower distance metric</span>
+                DIST = d * weights';
+
+                <span class="comment">% Add the distance to the distance matrix and place it back in the</span>
+                <span class="comment">% POPULATED_GRID.  Find the position (column number) of the</span>
+                <span class="comment">% 'DistanceWtd' field and assign the distance to that field.</span>
+                idx_DistanceWtd = strcmpi(DistLables,<span class="string">'DistanceWtd'</span>);
+                m(:,idx_DistanceWtd) = DIST;
+                obj.POPULATED_GRID.Distances{r} = m;
+
+
+            <span class="keyword">end</span>
+
+            <span class="comment">% Close waitbar</span>
+            close(f)
+
+
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> obj = CalcPrices(obj,varargin)
+            <span class="comment">% Interpolate</span>
+            <span class="comment">% Interpolate points using a nearest neighbor algorithm</span>
+            <span class="comment">%</span>
+            <span class="comment">% Loop Through Each Grid Cell and Calculate Price</span>
+            <span class="comment">% For each cell in the requested grid we have already (above) calculated</span>
+            <span class="comment">% the distance from each observation to that point.  Here we loop through</span>
+            <span class="comment">% each of these points and calculate the spread.  First we identify the set</span>
+            <span class="comment">% of points that are near enough to be included in the calculation.  A</span>
+            <span class="comment">% distance threshold ("threshold") and a minimum number of observations</span>
+            <span class="comment">% ("minobs") are set.  If there are at least 'minobs' observations within a</span>
+            <span class="comment">% distannce of 'threshold' from the grid point, we take a weighted average</span>
+            <span class="comment">% of those points to calculate the grid point spread.  If there are not</span>
+            <span class="comment">% enough points (number of pionts &lt; minobs), we increase the aperture a</span>
+            <span class="comment">% little but adding an increment to the threshold distance.  We then</span>
+            <span class="comment">% include any observations that are found within this wider distance.  This</span>
+            <span class="comment">% process is repeated until we have at least minobs observations included</span>
+            <span class="comment">% in the spread calculation.  Note that there may be more than minobs</span>
+            <span class="comment">% observations, even if the threshold was increased because many times</span>
+            <span class="comment">% there are several points equidistant from the grid point, so opening up</span>
+            <span class="comment">% the apeture even a little bit might include several additional</span>
+            <span class="comment">% observations.</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% RUN FROM OPTION</span>
+            def = <span class="string">''</span>;
+            defmsg = sprintf([<span class="string">'Problem with the run from option input. the '</span> <span class="keyword">...</span>
+                <span class="string">'description must be a string or a char'</span>]);
+            addParameter(p,<span class="string">'RunFrom'</span>,def);
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            <span class="comment">% SETTINGS</span>
+            threshold_initial = 0.15;
+            minobs = 10;
+            numgridcells = size(obj.POPULATED_GRID,1);
+            weightFactor = 10;
+
+            <span class="comment">% INITIALIZE ADDITIONAL COLUMNS IN THE GRID TABLE</span>
+            obj.POPULATED_GRID.SPR_calc = NaN(numgridcells,1);
+            obj.POPULATED_GRID.SPR_calc_wtd = NaN(numgridcells,1);
+            obj.POPULATED_GRID.nOBS_used = NaN(numgridcells,1);
+            obj.POPULATED_GRID.avgDIST = NaN(numgridcells,1);
+            obj.POPULATED_GRID.stdSPR = NaN(numgridcells,1);
+            obj.POPULATED_GRID.DistanceWts = cell(numgridcells,1);
+            obj.POPULATED_GRID.SpreadRange = NaN(numgridcells,1);
+            obj.POPULATED_GRID.NearbyPoints = cell(numgridcells,1);
+
+
+            <span class="comment">% Set up RunFrom. In case we're not running this from the app,</span>
+            <span class="comment">% we insert a dummy structure for the RunFrom argument.</span>
+            <span class="keyword">if</span> isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText_2.Text = <span class="string">""</span>;
+                RunFrom.Label_MyProgBar_Front_2.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front_2.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack_2.Position = [1,2,3,4];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set waitbar</span>
+            f = waitbar(0,<span class="string">'calculating distances...'</span>);
+            f.WindowState = <span class="string">'Minimize'</span>;
+
+            <span class="keyword">for</span> c = 1:numgridcells
+
+                waitbar(c/numgridcells)
+
+                <span class="comment">% Return where we are to the app if applicable</span>
+                <span class="comment">%RunFrom.tempdata = c/numgridcells;</span>
+                RunFrom.Label_MyProgBarText_2.Text = sprintf(<span class="string">'%.3f Finished...'</span>,c/numgridcells);
+                RunFrom.Label_MyProgBar_Front_2.BackgroundColor = [0.77,0.35,0.07];
+                RunFrom.Label_MyProgBar_Front_2.Position(3) = RunFrom.Panel_MyProgBarBack_2.Position(3) *0.95 *c/numgridcells;
+                <span class="comment">%refresh(RunFrom.CLAInterpolatorUIFigure);</span>
+
+                <span class="comment">% IDENTIFY NEARBY POINTS</span>
+                <span class="comment">% Set the initial threshold.  The threshold is initially set at this</span>
+                <span class="comment">% level.  If there are not a sufficient number of observations at or</span>
+                <span class="comment">% nearer than the threshold, we open the appeture (threshold) a little</span>
+                <span class="comment">% and count again.  Once we find at least the minimum number of</span>
+                <span class="comment">% observations (i.e. once nobs &gt;= minobs), we have identified the</span>
+                <span class="comment">% "nearby points"</span>
+                threshold = threshold_initial;
+                DistLables = obj.POPULATED_GRID.DistanceLables{c};
+
+                <span class="comment">% Get distances from the current grid point to all observations</span>
+                d = obj.POPULATED_GRID.Distances{c};
+                nobs = 1;
+                <span class="keyword">while</span> nobs &lt; minobs
+
+                    <span class="comment">% Identify the distances within the threshold distance. idx_thresh</span>
+                    <span class="comment">% is the index identifying the observations, d_thresh is the vector</span>
+                    <span class="comment">% of distances.</span>
+                    idx_thresh = d(:,2) &lt;= threshold;
+                    d_thresh = d(idx_thresh,:);
+
+                    <span class="comment">% Count the number of observations within the threshold distance</span>
+                    nobs = sum(idx_thresh);
+
+                    <span class="comment">% Increase the threshold slightly</span>
+                    threshold = threshold + 0.001;
+
+                    <span class="comment">% Calculate the weights.</span>
+                    <span class="comment">%</span>
+                    <span class="comment">% We have to do this after identifying the nearby points because</span>
+                    <span class="comment">% we don't know exactly how many nearby points there will be (e.g.</span>
+                    <span class="comment">% if there are more than the minimum number of points within the</span>
+                    <span class="comment">% initial threshold, or if a tie in distance results in more than</span>
+                    <span class="comment">% the minimum number included).</span>
+                    <span class="comment">%</span>
+                    <span class="comment">% The weights are constructed such that the smallest weight is</span>
+                    <span class="comment">% 1/weightFactor of the largest weight.  So, for example, if</span>
+                    <span class="comment">% weightFactor is set to 10, the smallest weight (furthest point)</span>
+                    <span class="comment">% will be set to 1/10th of the largest weight (nearest point).</span>
+                    <span class="comment">% Increasing the weightFactor will cause the closer points to be</span>
+                    <span class="comment">% more heavily weighted, decreasing the weightFactor will have a</span>
+                    <span class="comment">% smoothing effect on the spread calculation.</span>
+                    <span class="comment">% The weights will always sum to 1.</span>
+                    <span class="comment">%</span>
+                    <span class="comment">% We group the observations within the threshold by the distance</span>
+                    <span class="comment">% (so that all observations with the same distance will be given</span>
+                    <span class="comment">% the same weight).  We can just count the number of unique</span>
+                    <span class="comment">% distances in the d_thresh matrix (d_thresh holds all of the</span>
+                    <span class="comment">% observations within the threshold distance)</span>
+
+                    <span class="comment">% Calculate the unique distances (within d_thresh)</span>
+                    idx_distcol = strcmpi(DistLables,{<span class="string">'DistanceWtd'</span>});
+                    distances_unique = unique(d_thresh(:,idx_distcol));
+
+                    <span class="comment">% Calculate the raw weights (associated with each distance)</span>
+                    num_distances = length(distances_unique);
+                    wts_raw = 1 ./ linspace(threshold./weightFactor,threshold,num_distances);
+
+                    <span class="comment">% Match the distances from the raw weights to the distances in</span>
+                    <span class="comment">% d_thresh</span>
+                    [~,idx_wtdistances] = ismember(d_thresh(:,2),distances_unique);
+                    wts_matched = [wts_raw(idx_wtdistances)];
+                    wts = [wts_matched ./ sum(wts_matched)]';
+
+                    <span class="comment">% wts should be a column vector (if there is only one distance, it</span>
+                    <span class="comment">% can be a row vector)</span>
+                    <span class="keyword">if</span> ~iscolumn(wts)
+                        wts = wts';
+                    <span class="keyword">end</span>
+
+                <span class="keyword">end</span>
+
+                <span class="comment">% Store the nearby point matrix</span>
+                obj.POPULATED_GRID.NearbyPoints{c} = d_thresh;
+
+                <span class="comment">% Calculate the Spread (median spread within nearby points)</span>
+                idx_sprcol = strcmpi(DistLables,{<span class="string">'SPR'</span>});
+                obj.POPULATED_GRID.SPR_calc(c) = median(d_thresh(:,idx_sprcol));
+
+                <span class="comment">% Calculate the weighted spread (weighted by the calculated distance</span>
+                <span class="comment">% weights -- points that are further away receive a smaller weight).</span>
+                obj.POPULATED_GRID.SPR_calc_wtd(c) = d_thresh(:,idx_sprcol)' * wts;
+
+                <span class="comment">% Calculate other metrics</span>
+                obj.POPULATED_GRID.nOBS_used(c) = nobs;
+                obj.POPULATED_GRID.avgDIST(c) = mean(d(:,idx_distcol));
+                obj.POPULATED_GRID.SpreadRange(c) = range(d(:,idx_sprcol));
+                obj.POPULATED_GRID.stdSPR(c) = std(d(:,idx_sprcol));
+                obj.POPULATED_GRID.DistanceWts{c} = wts;
+
+
+                <span class="comment">% Calculate ConfidenceScore</span>
+                <span class="comment">% Get the confidence weight on distance</span>
+                distwt = obj.Parameters.ConfScorDistWt;
+
+
+                <span class="comment">% We scale the distances so that for both the number of observations and</span>
+                <span class="comment">% the 'distance', closer to 1 is better (more observations and smaller</span>
+                <span class="comment">% average distance).  This makes a larger confidence score</span>
+                <span class="comment">% better than a smaller.</span>
+                numObsScaled = obj.POPULATED_GRID.nOBS_used ./ max(obj.POPULATED_GRID.nOBS_used);
+                distScaled = 1-obj.POPULATED_GRID.avgDIST;
+                obj.POPULATED_GRID.confidence = distwt .* distScaled + (1-distwt) .* numObsScaled;
+
+                obj.POPULATED_GRID.confidenceSCALED = ones(size(obj.POPULATED_GRID.confidence));
+                Q = quantile(obj.POPULATED_GRID.confidence,4);
+                Q = sort(Q,<span class="string">"ascend"</span>);
+                <span class="keyword">for</span> q = 1:length(Q)
+                    qv = Q(q);
+                    idx = obj.POPULATED_GRID.confidence &gt; qv;
+                    obj.POPULATED_GRID.confidenceSCALED(idx) = q+1;
+                <span class="keyword">end</span>
+
+
+
+            <span class="keyword">end</span>
+
+            close(f)
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> obj = addLocData(obj,TAXONOMYTABS,varargin)
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% addLocData</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% RUN FROM OPTION</span>
+            def = <span class="string">''</span>;
+            defmsg = sprintf([<span class="string">'Problem with the run from option input. the '</span> <span class="keyword">...</span>
+                <span class="string">'description must be a string or a char'</span>]);
+            addParameter(p,<span class="string">'RunFrom'</span>,def);
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            <span class="comment">% Initialize</span>
+            numlocations = size(obj.POPULATED_GRID,1);
+            obj.POPULATED_GRID.ZipCodes = cell(numlocations,1);
+            obj.POPULATED_GRID.Coordinates = cell(numlocations,1);
+
+            <span class="comment">% Set waitbar</span>
+            f = waitbar(0,<span class="string">'calculating distances...'</span>);
+            <span class="comment">%f.WindowState = 'Minimize';</span>
+
+
+
+            <span class="comment">% Get the full list of locations in the requested grid and the locations</span>
+            <span class="comment">% (as defined in the requsted grid) in the location database so that we can</span>
+            <span class="comment">% match them up.</span>
+            GRID_Locations = obj.GRID.Geographies;
+
+            <span class="comment">% Each grid can define geography differently, so we need to</span>
+            <span class="comment">% find how this grid has defined geography.  Create a</span>
+            <span class="comment">% LocVarsTab and get the LocIDVars</span>
+            [~,~,~,LocVarsTab] = defGeographyTable(TAXONOMYTABS.LocationDatabase);
+            locationvars = obj.GRID.Geographies.Properties.VariableNames(<span class="keyword">...</span>
+                ismember(obj.GRID.Geographies.Properties.VariableNames,LocVarsTab.LocIDVar));
+
+            <span class="comment">% Create Augmented Location Database table (augmented with the Geographies</span>
+            <span class="comment">% variable constructed the same way as in the GRID)</span>
+            LocationDatabase = TAXONOMYTABS.LocationDatabase;
+            LocationDatabase.Geographies = LocationDatabase{:,locationvars};
+
+
+            <span class="comment">% Loop through all of the locations in the GRID and find the associated zip</span>
+            <span class="comment">% codes and Latitudes and Longitudes</span>
+            numlocations = size(GRID_Locations,1);
+            <span class="keyword">for</span> g = 1:numlocations
+
+                waitbar(g/numlocations)
+
+                <span class="comment">% Get the current location (ids)</span>
+                location = GRID_Locations.Geographies(g,:);
+
+                <span class="comment">% find the corresponding rows in the location database</span>
+                idx_locDatabase = all(LocationDatabase.Geographies == location,2);
+                <span class="keyword">if</span> sum(idx_locDatabase)&lt;1
+                    msg = sprintf(<span class="string">'possible error in geography data, location not found in location database'</span>);
+                    warning(msg);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Get the zip codes associated with this location</span>
+                zips = {unique(LocationDatabase.zip_numeric(idx_locDatabase))};
+
+                <span class="comment">% Get the coordinates associated with this location</span>
+                coords = {unique(LocationDatabase{idx_locDatabase,{<span class="string">'LAT'</span>,<span class="string">'LON'</span>}},<span class="string">'rows'</span>)};
+
+                <span class="comment">% Find cells in the POPGRID from this location</span>
+                idx_PopGrid = all(obj.POPULATED_GRID.Geographies == location,2);
+                <span class="keyword">if</span> sum(idx_PopGrid)&lt;1
+                    msg = sprintf(<span class="string">'possible error in geography data, location not found in populated grid'</span>);
+                    warning(msg);
+                <span class="keyword">end</span>
+
+                <span class="comment">% Add zip codes to the POPULATED GRID</span>
+                obj.POPULATED_GRID.ZipCodes(idx_PopGrid) = zips;
+
+                <span class="comment">% Add coordinates to the POPULATED GRID</span>
+                obj.POPULATED_GRID.Coordinates(idx_PopGrid) = coords;
+
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% Close waitbar</span>
+            close(f)
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> ResultsTab = checkPopGrid(obj)
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">% -------------------------------------------------------------</span>
+
+            <span class="comment">% Get Variables to Check</span>
+            GRDvars = sort(obj.POPULATED_GRID.Properties.VariableNames);
+
+            <span class="comment">% Initialize</span>
+            rvn = {<span class="string">'GridVariable'</span>,<span class="string">'OBShasVar'</span>,<span class="string">'OBShasNaNs'</span>,<span class="string">'VardataLookOK'</span>};
+            rvt = {<span class="string">'string'</span>,<span class="string">'logical'</span>,<span class="string">'logical'</span>,<span class="string">'logical'</span>};
+            ResultsTab = table(<span class="string">'size'</span>,[length(GRDvars),length(rvn)],<span class="keyword">...</span>
+                <span class="string">'VariableNames'</span>,rvn,<span class="string">'VariableTypes'</span>,rvt);
+            ResultsTab.GridVariable = GRDvars';
+            ResultsTab.Properties.RowNames = GRDvars';
+
+            <span class="comment">% Check that the OBS observations are appropriately aligned</span>
+            <span class="comment">% with the POPGRID</span>
+            OBSvars = obj.OBS.Properties.VariableNames;
+            <span class="keyword">for</span> v = 1:length(GRDvars)
+                varn = GRDvars{v};
+                ResultsTab.OBShasVar(v) = ismember(varn,OBSvars);
+            <span class="keyword">end</span>
+
+
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+classdef CLApopulatedGrid
+    % CLApopulatedGrid
+    %   
+    % Class object holds the fully populated grid (REQGRID_OUT) as well as
+    % some information related to the grid
+    %
+    % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+    properties
+        Description         % Brief description of the populated grid
+        CreatedOn           % Created on date (char)
+
+        GRID                % CLAgrid used in creating the populatedGrid
+
+        OBS                 % Observation table, created using the GimmeOBS
+                            % function associated with the DB Class Object
+
+        dimensions          % dimensions structure, created with GimmeOBS
+                            % function associated with the DB Class Object
+
+        POPULATED_GRID      % The full output requested grid table holding
+                            % the requested grid along with distances to
+                            % all of the observations
+
+        Parameters          % A structure holding the required simulation 
+                            % parameters such as weights, and other factors.
+                            % The Parameters structure holds the following:
+                            % - Dimension Weights
+                            % - Smoothing Parameters
+                            %       - Min number of points
+                            %       - Initial Aperture
+                            %       - Distance Weight Factor
+                            % - Confidence Score Distance Weight
+
+
+
+    end
+
+    methods
+        function obj = CLApopulatedGrid(GRID,varargin)
+            % CLApopulatedGrid
+            %   Construct an instance of this class
+            %   
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            % SET GRID PROPERTY
+            % You always need to have an already created GRID to create a
+            % populatedGrid, so it is not a variable input argument
+            obj.GRID = GRID;
+
+            % CREATE POPULATED GRID PROPERTY
+            % Start with the REQGRID table from the unpopulated GRID, then
+            % add empty fields for the additional distance fields.
+
+            % if the REQTABLE in the Input GRID has not been built, create
+            % it here
+            if size(GRID.REQTABLE,1) < 1
+                obj.GRID = obj.GRID.make_REQTABLE;
+            end
+            obj.POPULATED_GRID = obj.GRID.REQTABLE;
+            obj.POPULATED_GRID.Distances = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.DistanceLables = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.DistanceWts = cell(size(obj.POPULATED_GRID,1),1);
+            obj.POPULATED_GRID.WtAvgDistance = NaN(size(obj.POPULATED_GRID,1),1);
+
+
+            % SET UP INPUT PARSER
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;
+
+
+            % DESCRIPTION
+            def = sprintf("CLA Populated Grid created on %s",datetime());
+            defmsg = sprintf(['Problem with the populated grid description input. the ' ...
+                'description must be a string or char variable.']);
+            addParameter(p,'Description',def,...
+                @(x)...
+                assert(or(isstring(x),ischar(x)),...
+                defmsg)...
+                );
+
+
+            % PARSE INPUTS AND SET RESULTS
+            parse(p,varargin{:});
+            obj.Description = p.Results.Description;
+
+            % DEFAULT SETTINGS FOR PARAMETERS
+            obj.Parameters = struct();
+            obj.Parameters.DimWts = mkemptyDimWeightsTab();
+            obj.Parameters.Smoothing.MinNumPts = 20;
+            obj.Parameters.Smoothing.InitAper = 0.3;
+            obj.Parameters.Smoothing.DistWtFactor = 10;
+            obj.Parameters.ConfScorDistWt = 0.5;
+
+
+
+        end
+
+        function obj = CalculateDistances(obj,varargin)
+            % METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+            %
+            %
+            %
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;
+
+            % RUN FROM OPTION
+            def = '';
+            defmsg = sprintf(['Problem with the run from option input. the ' ...
+                'description must be a string or a char']);
+            addParameter(p,'RunFrom',def);
+
+            % Parse and set results
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            % Get the attributes
+            attributes = fieldnames(obj.dimensions);
+
+            % Get the number of gridpoints
+            numGridPoints = size(obj.POPULATED_GRID,1);
+
+            % WE'RE NOT CALCULATING THE FULL DISTANCE HERE
+            % MUST WAIT UNTIL THE USER HAS ENTERED WEIGHTS AND WE PICK THEM
+            % UP
+
+            % Set up RunFrom. In case we're not running this from the app,
+            % we insert a dummy structure for the RunFrom argument.
+            if isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText.Text = "";
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack.Position = [1,2,3,4];
+            end
+
+            % Set waitbar
+            f = waitbar(0,'calculating distances...');
+            f.WindowState = 'Minimize';
+
+            % We loop through, gridpoint by gridpoint, for each gridpoint we calculate
+            % the distance to all observations along each dimension (with respect to
+            % each attribute).
+            for gp = 1:numGridPoints
+
+                waitbar(gp/numGridPoints)
+
+                % Return where we are to the app if applicable
+                %RunFrom.tempdata = gp/numGridPoints;
+                RunFrom.Label_MyProgBarText.Text = sprintf('%.3f Finished...',gp/numGridPoints);
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position(3) = RunFrom.Panel_MyProgBarBack.Position(3) *0.95 *gp/numGridPoints;
+                %refresh(RunFrom.CLAInterpolatorUIFigure);
+                
+                % Initialize the Distance Mat
+                % the distance matrix holds 
+                DistMatID = NaN(size(obj.OBS,1),length(attributes));
+                DistMatDist = NaN(size(obj.OBS,1),length(attributes));
+                
+                for a = 1:length(attributes)
+
+                    % Initialize the Output matrix (dist) for the single attribute
+                    % dist is a two column matrix, the first column will hold the
+                    % observation number, and the second column will hold the distance
+                    % (with respect to the current attribute) from the gridpoint to the
+                    % observation.
+                    dist = NaN(size(obj.OBS,1),2);
+            
+                    % Get the attribute & distvar
+                    attribute = attributes{a};
+                    distvar = obj.dimensions.(attribute).distvar;
+            
+                    % Find out if the attribute is a categorical attribute (in which case
+                    % we will find the hamming distance)
+                    catvarflag = obj.GRID.Categoricals.IsCat(strcmpi(obj.GRID.Categoricals.Property,attribute));
+            
+                    y = obj.POPULATED_GRID.(distvar)(gp,:);
+                    x = obj.OBS.(distvar);
+            
+                    if catvarflag
+                        DistType = 'hamming';
+                    else
+                        DistType = 'euclidean';
+                    end
+
+                    % Calculate the distances
+                    % knnsearch returns two vectors: 
+                    %   D holds the distances from each point in x (the observations) 
+                    %   to y (the requsted grid point), sorted in order closest to 
+                    %   furthest.
+                    %   Idx holds the index for each point in x (the observations),
+                    %   sorted in order closest to furthest.
+                    %
+                    
+                    D_raw = pdist2(y,x,DistType);
+                    D = D_raw ./ max(D_raw);
+                    dist(:,1) = obj.OBS.OBS_ID;
+                    dist(:,2) = D;
+            
+                    % Fill in DistMats (holds all distances for all attributes)
+                    % We have two distance matrices, DistMatID holds the IDs of each of
+                    % the observations.  To make sure we don't lose track of which
+                    % observation we are measuring, we list the IDs for each attribute.
+                    % So each column of DistMatID should be the same.
+                    % 
+                    % DistMatDist holds the distances (for all attributes) of each 
+                    % point in the observations table.
+                    %
+                    DistMatID(:,a) = dist(:,1);
+                    DistMatDist(:,a) = dist(:,2);
+
+
+
+                end
+                
+                % We have now looped through all of the attributes and DistMatDist
+                % holds the distances from the gridpoint to each observation for all 
+                % attributes. We now calculate the weighted average spread using the
+                % weights vector we created above.
+                % AT THIS POINT WE JUST PUT IN A NAN PLACEHODER FOR THE
+                % WEIGHTED AVERAGE DISTANCE
+                % WAVGDIST = DistMatDist * wts;
+                WAVGDIST = NaN(size(DistMatDist,1),1);
+
+                % Get the observation Id column
+                OBSIDS = DistMatID(:,1);
+            
+                % Get the Spread associated with the observations
+                SPR = obj.OBS.SPR;
+            
+                % Check that the Observation IDs are all aligned properly
+                CHK = all(all(DistMatID(:,[2:end]) == repmat(DistMatID(:,1),1,size(DistMatID,2)-1),2));
+                if ~CHK
+                    fprintf('ERROR: Ids not aligned for attribute %s\n.', attribute)
+                    return
+                end
+                CHK1 = all(DistMatID(:,1) == obj.OBS.OBS_ID);
+                if ~CHK1
+                    fprintf('ERROR: Ids not aligned for attribute %s\n.', attribute)
+                    return
+                end
+                        
+                % Save the Distances and distance table lables (so that we can create a
+                % table easily and we don't forget how the columns line up) for the 
+                % individual point
+                distancelables = [{'ObsIds','DistanceWtd','SPR'},attributes'];
+                distances = sortrows([OBSIDS,WAVGDIST,SPR,DistMatDist],2);
+                obj.POPULATED_GRID.Distances{gp} = distances;
+                obj.POPULATED_GRID.DistanceLables{gp} = distancelables;
+
+
+            end
+            close(f)
+
+
+        end
+
+        function obj = CalcGower(obj,varargin)
+            % CalcGower
+            % Calculates the gower distance from each point in the cell to
+            % all observation points
+            %
+            %
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;
+
+            % RUN FROM OPTION
+            def = '';
+            defmsg = sprintf(['Problem with the run from option input. the ' ...
+                'run from option must be a string or a char']);
+            addParameter(p,'RunFrom',def);
+
+            % WEIGHTS
+            def = obj.GRID.Weights;
+            defmsg = sprintf(['Problem with the weightsTab input. the ' ...
+                'description must be a table']);
+            addParameter(p,'WeightsTab',def, @(x) istable(x)); 
+
+            % Parse and set results
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+            weightsTab = p.Results.WeightsTab;
+
+            % Calculate the Gower Distance for All Cells to All Observations
+            % Initialize
+            weights = weightsTab{"Scaled",:};
+            weightsVarNames = weightsTab.Properties.VariableNames;
+            numgridcells = size(obj.POPULATED_GRID,1);
+            
+            % Set up RunFrom. In case we're not running this from the app,
+            % we insert a dummy structure for the RunFrom argument.
+            if isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText.Text = "";
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack.Position = [1,2,3,4];
+            end            
+
+            % Set waitbar
+            f = waitbar(0,'calculating distances...');
+            f.WindowState = 'Minimize';
+            
+            % CALCULATE THE GOWER DISTANCE FOR ALL POINTS
+            for r = 1:numgridcells
+
+                waitbar(r/numgridcells)
+
+                % Return where we are to the app if applicable
+                %RunFrom.tempdata = gp/numGridPoints;
+                RunFrom.Label_MyProgBarText.Text = sprintf('%.3f Finished...',r/numgridcells);
+                RunFrom.Label_MyProgBar_Front.BackgroundColor = [0.00,0.45,0.74];
+                RunFrom.Label_MyProgBar_Front.Position(3) = RunFrom.Panel_MyProgBarBack.Position(3) *0.95 *r/numgridcells;
+                
+                % Identify the series (columns) that are associated with the distance
+                % dimensions.  The dimensions are listed in the variable names of the
+                % weights tab.
+                DistLables = obj.POPULATED_GRID.DistanceLables{r};
+                [~,idx_DimensionCols] = ismember(weightsVarNames,DistLables);
+            
+                % Get the full distance matrix (includes fields like Observation Id,
+                % Spread, etc. other than just dimensional distances)
+                m = obj.POPULATED_GRID.Distances{r};
+            
+                % Distances for Missing Values are set to 1 (the farthest distance
+                % posssible along that specific dimension).
+                m(isnan(m)) = 1;
+            
+                % Separate out the dimensional distances from the other fields in the
+                % distance matrix.
+                d = m(:,idx_DimensionCols);
+            
+                % Calculate the distance using the modified gower distance metric
+                DIST = d * weights';
+            
+                % Add the distance to the distance matrix and place it back in the
+                % POPULATED_GRID.  Find the position (column number) of the
+                % 'DistanceWtd' field and assign the distance to that field.
+                idx_DistanceWtd = strcmpi(DistLables,'DistanceWtd');
+                m(:,idx_DistanceWtd) = DIST;
+                obj.POPULATED_GRID.Distances{r} = m;
+            
+               
+            end
+
+            % Close waitbar
+            close(f)
+
+
+
+
+
+        end
+
+        function obj = CalcPrices(obj,varargin)
+            % Interpolate
+            % Interpolate points using a nearest neighbor algorithm
+            %
+            % Loop Through Each Grid Cell and Calculate Price
+            % For each cell in the requested grid we have already (above) calculated
+            % the distance from each observation to that point.  Here we loop through
+            % each of these points and calculate the spread.  First we identify the set
+            % of points that are near enough to be included in the calculation.  A
+            % distance threshold ("threshold") and a minimum number of observations
+            % ("minobs") are set.  If there are at least 'minobs' observations within a
+            % distannce of 'threshold' from the grid point, we take a weighted average
+            % of those points to calculate the grid point spread.  If there are not
+            % enough points (number of pionts < minobs), we increase the aperture a
+            % little but adding an increment to the threshold distance.  We then
+            % include any observations that are found within this wider distance.  This
+            % process is repeated until we have at least minobs observations included
+            % in the spread calculation.  Note that there may be more than minobs
+            % observations, even if the threshold was increased because many times
+            % there are several points equidistant from the grid point, so opening up
+            % the apeture even a little bit might include several additional
+            % observations.
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;
+
+            % RUN FROM OPTION
+            def = '';
+            defmsg = sprintf(['Problem with the run from option input. the ' ...
+                'description must be a string or a char']);
+            addParameter(p,'RunFrom',def);
+
+            % Parse and set results
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            % SETTINGS
+            threshold_initial = 0.15;
+            minobs = 10;
+            numgridcells = size(obj.POPULATED_GRID,1);
+            weightFactor = 10;
+            
+            % INITIALIZE ADDITIONAL COLUMNS IN THE GRID TABLE
+            obj.POPULATED_GRID.SPR_calc = NaN(numgridcells,1);
+            obj.POPULATED_GRID.SPR_calc_wtd = NaN(numgridcells,1);
+            obj.POPULATED_GRID.nOBS_used = NaN(numgridcells,1);
+            obj.POPULATED_GRID.avgDIST = NaN(numgridcells,1);
+            obj.POPULATED_GRID.stdSPR = NaN(numgridcells,1);
+            obj.POPULATED_GRID.DistanceWts = cell(numgridcells,1);
+            obj.POPULATED_GRID.SpreadRange = NaN(numgridcells,1);
+            obj.POPULATED_GRID.NearbyPoints = cell(numgridcells,1);
+
+
+            % Set up RunFrom. In case we're not running this from the app,
+            % we insert a dummy structure for the RunFrom argument.
+            if isempty(RunFrom)
+                RunFrom = struct();
+                RunFrom.Label_MyProgBarText_2.Text = "";
+                RunFrom.Label_MyProgBar_Front_2.BackgroundColor = [0 1 0];
+                RunFrom.Label_MyProgBar_Front_2.Position = [1,2,3,4];
+                RunFrom.Panel_MyProgBarBack_2.Position = [1,2,3,4];
+            end            
+
+            % Set waitbar
+            f = waitbar(0,'calculating distances...');
+            f.WindowState = 'Minimize';            
+            
+            for c = 1:numgridcells
+
+                waitbar(c/numgridcells)
+
+                % Return where we are to the app if applicable
+                %RunFrom.tempdata = c/numgridcells;
+                RunFrom.Label_MyProgBarText_2.Text = sprintf('%.3f Finished...',c/numgridcells);
+                RunFrom.Label_MyProgBar_Front_2.BackgroundColor = [0.77,0.35,0.07];
+                RunFrom.Label_MyProgBar_Front_2.Position(3) = RunFrom.Panel_MyProgBarBack_2.Position(3) *0.95 *c/numgridcells;
+                %refresh(RunFrom.CLAInterpolatorUIFigure);
+            
+                % IDENTIFY NEARBY POINTS
+                % Set the initial threshold.  The threshold is initially set at this
+                % level.  If there are not a sufficient number of observations at or
+                % nearer than the threshold, we open the appeture (threshold) a little 
+                % and count again.  Once we find at least the minimum number of 
+                % observations (i.e. once nobs >= minobs), we have identified the
+                % "nearby points"
+                threshold = threshold_initial;
+                DistLables = obj.POPULATED_GRID.DistanceLables{c};
+            
+                % Get distances from the current grid point to all observations
+                d = obj.POPULATED_GRID.Distances{c};
+                nobs = 1;
+                while nobs < minobs
+            
+                    % Identify the distances within the threshold distance. idx_thresh
+                    % is the index identifying the observations, d_thresh is the vector
+                    % of distances.
+                    idx_thresh = d(:,2) <= threshold;
+                    d_thresh = d(idx_thresh,:);
+                    
+                    % Count the number of observations within the threshold distance
+                    nobs = sum(idx_thresh);
+            
+                    % Increase the threshold slightly
+                    threshold = threshold + 0.001;
+            
+                    % Calculate the weights.
+                    %
+                    % We have to do this after identifying the nearby points because
+                    % we don't know exactly how many nearby points there will be (e.g.
+                    % if there are more than the minimum number of points within the
+                    % initial threshold, or if a tie in distance results in more than
+                    % the minimum number included).
+                    %
+                    % The weights are constructed such that the smallest weight is
+                    % 1/weightFactor of the largest weight.  So, for example, if
+                    % weightFactor is set to 10, the smallest weight (furthest point) 
+                    % will be set to 1/10th of the largest weight (nearest point).
+                    % Increasing the weightFactor will cause the closer points to be
+                    % more heavily weighted, decreasing the weightFactor will have a
+                    % smoothing effect on the spread calculation.
+                    % The weights will always sum to 1.
+                    %
+                    % We group the observations within the threshold by the distance
+                    % (so that all observations with the same distance will be given
+                    % the same weight).  We can just count the number of unique
+                    % distances in the d_thresh matrix (d_thresh holds all of the
+                    % observations within the threshold distance)
+                    
+                    % Calculate the unique distances (within d_thresh)
+                    idx_distcol = strcmpi(DistLables,{'DistanceWtd'});
+                    distances_unique = unique(d_thresh(:,idx_distcol));
+            
+                    % Calculate the raw weights (associated with each distance)
+                    num_distances = length(distances_unique);
+                    wts_raw = 1 ./ linspace(threshold./weightFactor,threshold,num_distances);
+            
+                    % Match the distances from the raw weights to the distances in
+                    % d_thresh
+                    [~,idx_wtdistances] = ismember(d_thresh(:,2),distances_unique);
+                    wts_matched = [wts_raw(idx_wtdistances)];
+                    wts = [wts_matched ./ sum(wts_matched)]';
+            
+                    % wts should be a column vector (if there is only one distance, it
+                    % can be a row vector)
+                    if ~iscolumn(wts)
+                        wts = wts';
+                    end
+                    
+                end
+            
+                % Store the nearby point matrix
+                obj.POPULATED_GRID.NearbyPoints{c} = d_thresh;
+            
+                % Calculate the Spread (median spread within nearby points)
+                idx_sprcol = strcmpi(DistLables,{'SPR'});
+                obj.POPULATED_GRID.SPR_calc(c) = median(d_thresh(:,idx_sprcol));
+            
+                % Calculate the weighted spread (weighted by the calculated distance
+                % weights REPLACE_WITH_DASH_DASH points that are further away receive a smaller weight).
+                obj.POPULATED_GRID.SPR_calc_wtd(c) = d_thresh(:,idx_sprcol)' * wts;
+            
+                % Calculate other metrics
+                obj.POPULATED_GRID.nOBS_used(c) = nobs;
+                obj.POPULATED_GRID.avgDIST(c) = mean(d(:,idx_distcol));
+                obj.POPULATED_GRID.SpreadRange(c) = range(d(:,idx_sprcol));
+                obj.POPULATED_GRID.stdSPR(c) = std(d(:,idx_sprcol));
+                obj.POPULATED_GRID.DistanceWts{c} = wts;
+
+
+                % Calculate ConfidenceScore
+                % Get the confidence weight on distance
+                distwt = obj.Parameters.ConfScorDistWt;
+                
+                
+                % We scale the distances so that for both the number of observations and
+                % the 'distance', closer to 1 is better (more observations and smaller
+                % average distance).  This makes a larger confidence score
+                % better than a smaller.
+                numObsScaled = obj.POPULATED_GRID.nOBS_used ./ max(obj.POPULATED_GRID.nOBS_used);
+                distScaled = 1-obj.POPULATED_GRID.avgDIST;
+                obj.POPULATED_GRID.confidence = distwt .* distScaled + (1-distwt) .* numObsScaled;
+                
+                obj.POPULATED_GRID.confidenceSCALED = ones(size(obj.POPULATED_GRID.confidence));
+                Q = quantile(obj.POPULATED_GRID.confidence,4);
+                Q = sort(Q,"ascend");
+                for q = 1:length(Q)
+                    qv = Q(q);
+                    idx = obj.POPULATED_GRID.confidence > qv;
+                    obj.POPULATED_GRID.confidenceSCALED(idx) = q+1;
+                end
+
+
+            
+            end
+
+            close(f)
+
+        end
+
+        function obj = addLocData(obj,TAXONOMYTABS,varargin)
+            %
+            %
+            % addLocData
+            %
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;
+
+            % RUN FROM OPTION
+            def = '';
+            defmsg = sprintf(['Problem with the run from option input. the ' ...
+                'description must be a string or a char']);
+            addParameter(p,'RunFrom',def);
+
+            % Parse and set results
+            parse(p,varargin{:});
+            RunFrom = p.Results.RunFrom;
+
+            % Initialize
+            numlocations = size(obj.POPULATED_GRID,1);
+            obj.POPULATED_GRID.ZipCodes = cell(numlocations,1);
+            obj.POPULATED_GRID.Coordinates = cell(numlocations,1);
+            
+            % Set waitbar
+            f = waitbar(0,'calculating distances...');
+            %f.WindowState = 'Minimize';
+            
+            
+            
+            % Get the full list of locations in the requested grid and the locations 
+            % (as defined in the requsted grid) in the location database so that we can
+            % match them up.
+            GRID_Locations = obj.GRID.Geographies;
+            
+            % Each grid can define geography differently, so we need to
+            % find how this grid has defined geography.  Create a
+            % LocVarsTab and get the LocIDVars
+            [~,~,~,LocVarsTab] = defGeographyTable(TAXONOMYTABS.LocationDatabase);
+            locationvars = obj.GRID.Geographies.Properties.VariableNames(...
+                ismember(obj.GRID.Geographies.Properties.VariableNames,LocVarsTab.LocIDVar));
+            
+            % Create Augmented Location Database table (augmented with the Geographies
+            % variable constructed the same way as in the GRID)
+            LocationDatabase = TAXONOMYTABS.LocationDatabase;
+            LocationDatabase.Geographies = LocationDatabase{:,locationvars};
+            
+            
+            % Loop through all of the locations in the GRID and find the associated zip
+            % codes and Latitudes and Longitudes
+            numlocations = size(GRID_Locations,1);
+            for g = 1:numlocations
+            
+                waitbar(g/numlocations)
+            
+                % Get the current location (ids)
+                location = GRID_Locations.Geographies(g,:);
+            
+                % find the corresponding rows in the location database
+                idx_locDatabase = all(LocationDatabase.Geographies == location,2);
+                if sum(idx_locDatabase)<1
+                    msg = sprintf('possible error in geography data, location not found in location database');
+                    warning(msg);
+                end
+                
+                % Get the zip codes associated with this location
+                zips = {unique(LocationDatabase.zip_numeric(idx_locDatabase))};
+            
+                % Get the coordinates associated with this location
+                coords = {unique(LocationDatabase{idx_locDatabase,{'LAT','LON'}},'rows')};    
+            
+                % Find cells in the POPGRID from this location
+                idx_PopGrid = all(obj.POPULATED_GRID.Geographies == location,2);
+                if sum(idx_PopGrid)<1
+                    msg = sprintf('possible error in geography data, location not found in populated grid');
+                    warning(msg);
+                end
+            
+                % Add zip codes to the POPULATED GRID
+                obj.POPULATED_GRID.ZipCodes(idx_PopGrid) = zips;
+            
+                % Add coordinates to the POPULATED GRID
+                obj.POPULATED_GRID.Coordinates(idx_PopGrid) = coords;
+            
+            end
+            
+            
+            % Close waitbar
+            close(f)
+
+
+        end
+
+        function ResultsTab = checkPopGrid(obj)
+            %
+            %
+            %
+            %
+            %
+            %
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+            % Get Variables to Check
+            GRDvars = sort(obj.POPULATED_GRID.Properties.VariableNames);
+            
+            % Initialize
+            rvn = {'GridVariable','OBShasVar','OBShasNaNs','VardataLookOK'};
+            rvt = {'string','logical','logical','logical'};
+            ResultsTab = table('size',[length(GRDvars),length(rvn)],...
+                'VariableNames',rvn,'VariableTypes',rvt);
+            ResultsTab.GridVariable = GRDvars';
+            ResultsTab.Properties.RowNames = GRDvars';
+
+            % Check that the OBS observations are appropriately aligned
+            % with the POPGRID
+            OBSvars = obj.OBS.Properties.VariableNames;
+            for v = 1:length(GRDvars)
+                varn = GRDvars{v};
+                ResultsTab.OBShasVar(v) = ismember(varn,OBSvars);
+            end
+
+
+
+        end
+
+    end
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

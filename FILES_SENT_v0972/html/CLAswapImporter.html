@@ -1,0 +1,844 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>CLAswapImporter</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="CLAswapImporter.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">classdef</span> CLAswapImporter
+    <span class="comment">%UNTITLED5 Summary of this class goes here</span>
+    <span class="comment">%   Detailed explanation goes here</span>
+
+    <span class="keyword">properties</span>
+        SOFR_RAW            <span class="comment">% RAW DATA. Temporary table holds imported data</span>
+                            <span class="comment">% Unchanged as data is cleaned, etc. Typically</span>
+                            <span class="comment">% deleted after the class object is created).</span>
+        SOFR                <span class="comment">% WORKING DATA. Temporary table holding imported</span>
+                            <span class="comment">% SOFR swap data</span>
+        SOFR_filename       <span class="comment">% string of full file path (incluing extension)</span>
+                            <span class="comment">% holding the location of the text file holding</span>
+                            <span class="comment">% the SOFR swap Data</span>
+        SOFR_tenorTab       <span class="comment">% Swap Tenor Table, associates the tenor (in</span>
+                            <span class="comment">% months) with the specific swap series.</span>
+
+        LIBOR_RAW           <span class="comment">% RAW DATA.</span>
+
+        LIBOR               <span class="comment">% LIBOR working data table.</span>
+
+        LIBOR_filename      <span class="comment">% path</span>
+
+        LIBOR_tenorTab      <span class="comment">% LIBOR</span>
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">methods</span>
+        <span class="keyword">function</span> IMP = CLAswapImporter(SOFR_filename,LIBOR_filename)
+            <span class="comment">% The CLAswapImporter needs only the filename to be created. It</span>
+            <span class="comment">% must be either a string or a char (will be converted to a</span>
+            <span class="comment">% string), and must point to a spreadsheet (end in xls, or</span>
+            <span class="comment">% xlsx).</span>
+
+            <span class="comment">% check that the SOFR file name is text</span>
+            <span class="keyword">if</span> ~or(isstring(SOFR_filename),ischar(SOFR_filename))
+                msg = sprintf([<span class="string">'Problem with argument handed to CLAswapImporter.'</span> <span class="keyword">...</span>
+                    <span class="string">' SOFR_filename must be either a string or char.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+
+            <span class="comment">% check that the SOFR file name is text</span>
+            <span class="keyword">if</span> ~or(isstring(LIBOR_filename),ischar(LIBOR_filename))
+                msg = sprintf([<span class="string">'Problem with argument handed to CLAswapImporter.'</span> <span class="keyword">...</span>
+                    <span class="string">' LIBOR_filename must be either a string or char.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% check that the file is a spreadsheet (file extension)</span>
+            filenameSplit = strsplit(string(SOFR_filename),<span class="string">"."</span>);
+            extension = filenameSplit(end);
+            <span class="keyword">if</span> ~contains(extension, <span class="string">"xls"</span>)
+                msg = sprintf([<span class="string">'Problem with argument handed to CLAswapImporter.'</span> <span class="keyword">...</span>
+                    <span class="string">' SOFR_filename must point to a spreadsheet.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+            <span class="comment">% check that the file is a spreadsheet (file extension)</span>
+            filenameSplit = strsplit(string(LIBOR_filename),<span class="string">"."</span>);
+            extension = filenameSplit(end);
+            <span class="keyword">if</span> ~contains(extension, <span class="string">"xls"</span>)
+                msg = sprintf([<span class="string">'Problem with argument handed to CLAswapImporter.'</span> <span class="keyword">...</span>
+                    <span class="string">' LIBOR_filename must point to a spreadsheet.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% Store the file name in the file name property</span>
+            IMP.SOFR_filename = string(SOFR_filename);
+            IMP.LIBOR_filename = string(LIBOR_filename);
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> IMP = importSOFR(IMP)
+            <span class="comment">% Import the raw SOFR data into the SOFR_RAW table</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+
+
+
+            vars = [<span class="keyword">...</span>
+                <span class="string">"MONEY"</span>	<span class="string">"datetime"</span>
+                <span class="string">"USDSROISON"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROISSW"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS2W"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS1M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS2M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS3M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS4M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS5M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS6M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS7M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS8M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS9M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS10M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS11M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS1Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS15M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS18M"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS21M"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS2Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS3Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS4Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS5Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS6Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS7Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS8Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS9Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS10Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS11Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS12Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS13Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS14Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS15Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS20Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS25Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS30Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS35Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS40Y"</span>	<span class="string">"double"</span>;                 <span class="string">"USDSROIS45Y"</span>	<span class="string">"double"</span>
+                <span class="string">"USDSROIS50Y"</span>	<span class="string">"double"</span>];
+
+            <span class="comment">% If row start and end points are not specified, define defaults</span>
+            dataLines = [3, Inf];
+
+            <span class="comment">% Set up the Import Options and import the data</span>
+            opts = spreadsheetImportOptions(<span class="string">"NumVariables"</span>, 40);
+
+            <span class="comment">% Specify sheet and range</span>
+            opts.Sheet = <span class="string">"Sheet2"</span>;
+            opts.DataRange = dataLines(1, :);
+
+            <span class="comment">% Specify column names and types</span>
+            opts.VariableNames = vars(:,1);
+            opts.VariableTypes = vars(:,2);
+
+
+            <span class="comment">% Import the data</span>
+            <span class="keyword">if</span> isempty(IMP.SOFR_filename)
+                msg = fprintf(<span class="string">'No SOFR swap file set'</span>);
+                error(msg)
+            <span class="keyword">end</span>
+
+            workbookFile = IMP.SOFR_filename;
+            SOFR_Swap = readtable(workbookFile, opts, <span class="string">"UseExcel"</span>, false);
+
+            <span class="keyword">for</span> idx = 2:size(dataLines, 1)
+                opts.DataRange = dataLines(idx, :);
+                tb = readtable(workbookFile, opts, <span class="string">"UseExcel"</span>, false);
+                SOFR_Swap = [SOFR_Swap; tb]; <span class="comment">%#ok&lt;AGROW&gt;</span>
+            <span class="keyword">end</span>
+
+            IMP.SOFR_RAW = SOFR_Swap;
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> IMP = makeTenorTabs(IMP)
+
+            tenorcell_SOFR = {<span class="keyword">...</span>
+                <span class="string">"USDSROISON"</span>	0.04
+                <span class="string">"USDSROISSW"</span>	0.2
+                <span class="string">"USDSROIS2W"</span>	0.5
+                <span class="string">"USDSROIS1M"</span>	1
+                <span class="string">"USDSROIS2M"</span>	2
+                <span class="string">"USDSROIS3M"</span>	3
+                <span class="string">"USDSROIS4M"</span>	4
+                <span class="string">"USDSROIS5M"</span>	5
+                <span class="string">"USDSROIS6M"</span>	6
+                <span class="string">"USDSROIS7M"</span>	7
+                <span class="string">"USDSROIS8M"</span>	8
+                <span class="string">"USDSROIS9M"</span>	9
+                <span class="string">"USDSROIS10M"</span>	10
+                <span class="string">"USDSROIS11M"</span>	11
+                <span class="string">"USDSROIS1Y"</span>	12
+                <span class="string">"USDSROIS15M"</span>	15
+                <span class="string">"USDSROIS18M"</span>	18
+                <span class="string">"USDSROIS21M"</span>	21
+                <span class="string">"USDSROIS2Y"</span>	24
+                <span class="string">"USDSROIS3Y"</span>	36
+                <span class="string">"USDSROIS4Y"</span>	48
+                <span class="string">"USDSROIS5Y"</span>	60
+                <span class="string">"USDSROIS6Y"</span>	72
+                <span class="string">"USDSROIS7Y"</span>	84
+                <span class="string">"USDSROIS8Y"</span>	96
+                <span class="string">"USDSROIS9Y"</span>	108
+                <span class="string">"USDSROIS10Y"</span>	120
+                <span class="string">"USDSROIS11Y"</span>	132
+                <span class="string">"USDSROIS12Y"</span>	144
+                <span class="string">"USDSROIS13Y"</span>	156
+                <span class="string">"USDSROIS14Y"</span>	168
+                <span class="string">"USDSROIS15Y"</span>	180
+                <span class="string">"USDSROIS20Y"</span>	240
+                <span class="string">"USDSROIS25Y"</span>	300
+                <span class="string">"USDSROIS30Y"</span>	360
+                <span class="string">"USDSROIS35Y"</span>	420
+                <span class="string">"USDSROIS40Y"</span>	480
+                <span class="string">"USDSROIS45Y"</span>	540
+                <span class="string">"USDSROIS50Y"</span>	600};
+
+            IMP.SOFR_tenorTab = cell2table(tenorcell_SOFR,<span class="keyword">...</span>
+                <span class="string">'variableNames'</span>,{<span class="string">'SOFR_SeriesName'</span>,<span class="string">'Months'</span>});
+
+            tenorcell_LIBOR = {<span class="keyword">...</span>
+                <span class="string">"USDAM3L1Y"</span>	    12.00
+                <span class="string">"USDAM3L2Y"</span>	    24.00
+                <span class="string">"USDAM3L3Y"</span>	    36.00
+                <span class="string">"USDAM3L4Y"</span>	    48.00
+                <span class="string">"USDAM3L5Y"</span>	    60.00
+                <span class="string">"USDAM3L6Y"</span>	    72.00
+                <span class="string">"USDAM3L7Y"</span>	    84.00
+                <span class="string">"USDAM3L8Y"</span>	    96.00
+                <span class="string">"USDAM3L9Y"</span>	    108.00
+                <span class="string">"USDAM3L10Y"</span>	120.00
+                <span class="string">"USDAM3L12Y"</span>	144.00
+                <span class="string">"USDAM3L15Y"</span>	180.00
+                <span class="string">"USDAM3L20Y"</span>	240.00
+                <span class="string">"USDAM3L25Y"</span>	300.00
+                <span class="string">"USDAM3L30Y"</span>	360.00
+                <span class="string">"USDAM3L40Y"</span>	480.00
+                <span class="string">"USDAM3L50Y"</span>	600.00};
+
+            IMP.LIBOR_tenorTab = cell2table(tenorcell_LIBOR,<span class="keyword">...</span>
+                <span class="string">'variableNames'</span>,{<span class="string">'LIBOR_SeriesName'</span>,<span class="string">'Months'</span>});
+
+
+
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> IMP = importLIBOR(IMP)
+
+            vars = [<span class="keyword">...</span>
+                <span class="string">"MONEY"</span>,	    <span class="string">"datetime"</span>; <span class="string">"USDBKGD"</span>,	<span class="string">"string"</span>;
+                <span class="string">"USDAM3L1Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L1Y1"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L2Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L3Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L4Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L5Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L6Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L7Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L8Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L9Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L10Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L12Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L15Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L20Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L25Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L30Y"</span>,	<span class="string">"double"</span>;
+                <span class="string">"USDAM3L40Y"</span>,	<span class="string">"double"</span>;   <span class="string">"USDAM3L50Y"</span>,	<span class="string">"double"</span>];
+
+            <span class="comment">% Set workbook file</span>
+            <span class="keyword">if</span> isempty(IMP.LIBOR_filename)
+                msg = fprintf(<span class="string">'No libor swap file set'</span>);
+                error(msg)
+            <span class="keyword">end</span>
+            workbookFile = IMP.LIBOR_filename;
+
+            <span class="comment">% If no sheet is specified, read from Sheet2</span>
+            sheetName = <span class="string">"Sheet2"</span>;
+
+            <span class="comment">% If row start and end points are not specified, define defaults</span>
+            dataLines = [3, Inf];
+
+            <span class="comment">% Set up the Import Options and import the data</span>
+            opts = spreadsheetImportOptions(<span class="string">"NumVariables"</span>, 20);
+
+            <span class="comment">% Specify sheet and range</span>
+            opts.Sheet = sheetName;
+            opts.DataRange = dataLines(1, :);
+
+            <span class="comment">% Specify column names and types</span>
+            opts.VariableNames = vars(:,1);
+            opts.VariableTypes = vars(:,2);
+
+            <span class="comment">% Specify variable properties</span>
+            opts = setvaropts(opts, <span class="string">"USDBKGD"</span>, <span class="string">"WhitespaceRule"</span>, <span class="string">"preserve"</span>);
+            opts = setvaropts(opts, <span class="string">"USDBKGD"</span>, <span class="string">"EmptyFieldRule"</span>, <span class="string">"auto"</span>);
+
+            <span class="comment">% Import the data</span>
+            IMP.LIBOR_RAW = readtable(workbookFile, opts, <span class="string">"UseExcel"</span>, false);
+
+            <span class="keyword">for</span> idx = 2:size(dataLines, 1)
+                opts.DataRange = dataLines(idx, :);
+                tb = readtable(workbookFile, opts, <span class="string">"UseExcel"</span>, false);
+                IMP.LIBOR_RAW = [IMP.LIBOR_RAW; tb]; <span class="comment">%#ok&lt;AGROW&gt;</span>
+            <span class="keyword">end</span>
+
+
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> IMP = createSOFRTable(IMP)
+            <span class="comment">% createSOFRTable</span>
+            <span class="comment">%</span>
+            <span class="comment">% creates the SOFR table by interpolating the full swap curve</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Make sure we have the tenor tables already created</span>
+            <span class="keyword">if</span> isempty(IMP.SOFR_tenorTab)
+                msg = sprintf([<span class="string">'you have not created the SOFR tenor table '</span> <span class="keyword">...</span>
+                    <span class="string">'yet for this CLAswapImporter. Run .matTenorTabs and try again.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+
+            <span class="comment">% Set the range for interpoloation</span>
+            min_months = 0.04;
+            max_months = 600;
+
+            <span class="comment">% Get the imported (RAW) data to interpolate</span>
+            R = IMP.SOFR_RAW;
+
+            <span class="comment">% Initialize</span>
+            I = NaN(size(R,1),max(IMP.SOFR_tenorTab.Months+1));
+            x_data = IMP.SOFR_tenorTab.Months';
+            x_interped = [min_months,1:max_months];
+
+            <span class="comment">% Loop through row by row (date by date) and interpoloate each</span>
+            <span class="comment">% row of the raw table</span>
+            <span class="keyword">for</span> i = 1:size(I,1)
+                <span class="comment">% make sure we don't grab any NaN data</span>
+                idx_NonNaNs = ~isnan(R{i,IMP.SOFR_tenorTab.SOFR_SeriesName});
+                v_data = R{i,IMP.SOFR_tenorTab.SOFR_SeriesName};
+                v_interped = max(0,interp1(x_data(idx_NonNaNs),v_data(idx_NonNaNs),x_interped,<span class="string">'linear'</span>,<span class="string">'extrap'</span>));
+                I(i,:) = v_interped;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Turn the matrix with the full interpolated data into a table</span>
+            vns_s = strcat(<span class="string">"SOFRSWAP_"</span>,string(floor(x_interped)));
+            s = array2table(I,<span class="string">'VariableNames'</span>,vns_s);
+            s.SWAPDATE = datenum(R.MONEY);
+            s = movevars(s, <span class="string">"SWAPDATE"</span>, <span class="string">"Before"</span>, 1);
+
+            <span class="comment">% Store interpolated table</span>
+            IMP.SOFR = s;
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> IMP = createLIBORTable(IMP)
+            <span class="comment">% createLIBORTable</span>
+            <span class="comment">%</span>
+            <span class="comment">% creates the LIBOR table by interpolating the full swap curve</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Make sure we have the tenor tables already created</span>
+            <span class="keyword">if</span> isempty(IMP.LIBOR_tenorTab)
+                msg = sprintf([<span class="string">'you have not created the LIBOR tenor table '</span> <span class="keyword">...</span>
+                    <span class="string">'yet for this CLAswapImporter. Run .matTenorTabs and try again.'</span>]);
+                error(msg)
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% Set the range for interpoloation</span>
+            min_months = 0.04;
+            max_months = 600;
+
+            <span class="comment">% Get the imported (RAW) data to interpolate</span>
+            R = IMP.LIBOR_RAW;
+
+            <span class="comment">% Initialize</span>
+            I = NaN(size(R,1),max(IMP.LIBOR_tenorTab.Months+1));
+            x_data = IMP.LIBOR_tenorTab.Months';
+            x_interped = [min_months,1:max_months];
+
+            <span class="comment">% Loop through row by row (date by date) and interpoloate each</span>
+            <span class="comment">% row of the raw table</span>
+            <span class="keyword">for</span> i = 1:size(I,1)
+                <span class="comment">% make sure we don't grab any NaN data</span>
+                idx_NonNaNs = ~isnan(R{i,IMP.LIBOR_tenorTab.LIBOR_SeriesName});
+                v_data = R{i,IMP.LIBOR_tenorTab.LIBOR_SeriesName};
+                v_interped = max(0,interp1(x_data(idx_NonNaNs),v_data(idx_NonNaNs),x_interped,<span class="string">'linear'</span>,<span class="string">'extrap'</span>));
+                I(i,:) = v_interped;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Turn the matrix with the full interpolated data into a table</span>
+            vns_s = strcat(<span class="string">"LIBORSWAP_"</span>,string(floor(x_interped)));
+            s = array2table(I,<span class="string">'VariableNames'</span>,vns_s);
+            s.SWAPDATE = datenum(R.MONEY);
+            s = movevars(s, <span class="string">"SWAPDATE"</span>, <span class="string">"Before"</span>, 1);
+
+
+            <span class="comment">% Store interpolated table</span>
+            IMP.LIBOR = s;
+
+
+
+
+
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+classdef CLAswapImporter
+    %UNTITLED5 Summary of this class goes here
+    %   Detailed explanation goes here
+
+    properties
+        SOFR_RAW            % RAW DATA. Temporary table holds imported data 
+                            % Unchanged as data is cleaned, etc. Typically
+                            % deleted after the class object is created).
+        SOFR                % WORKING DATA. Temporary table holding imported 
+                            % SOFR swap data
+        SOFR_filename       % string of full file path (incluing extension) 
+                            % holding the location of the text file holding
+                            % the SOFR swap Data
+        SOFR_tenorTab       % Swap Tenor Table, associates the tenor (in
+                            % months) with the specific swap series.
+
+        LIBOR_RAW           % RAW DATA.
+
+        LIBOR               % LIBOR working data table.
+
+        LIBOR_filename      % path
+
+        LIBOR_tenorTab      % LIBOR 
+
+    end
+
+    methods
+        function IMP = CLAswapImporter(SOFR_filename,LIBOR_filename)
+            % The CLAswapImporter needs only the filename to be created. It
+            % must be either a string or a char (will be converted to a
+            % string), and must point to a spreadsheet (end in xls, or
+            % xlsx).
+
+            % check that the SOFR file name is text
+            if ~or(isstring(SOFR_filename),ischar(SOFR_filename))
+                msg = sprintf(['Problem with argument handed to CLAswapImporter.' ...
+                    ' SOFR_filename must be either a string or char.']);
+                error(msg)
+            end
+
+            % check that the SOFR file name is text
+            if ~or(isstring(LIBOR_filename),ischar(LIBOR_filename))
+                msg = sprintf(['Problem with argument handed to CLAswapImporter.' ...
+                    ' LIBOR_filename must be either a string or char.']);
+                error(msg)
+            end
+
+
+            % check that the file is a spreadsheet (file extension)
+            filenameSplit = strsplit(string(SOFR_filename),".");
+            extension = filenameSplit(end);
+            if ~contains(extension, "xls")
+                msg = sprintf(['Problem with argument handed to CLAswapImporter.' ...
+                    ' SOFR_filename must point to a spreadsheet.']);
+                error(msg)
+            end
+            % check that the file is a spreadsheet (file extension)
+            filenameSplit = strsplit(string(LIBOR_filename),".");
+            extension = filenameSplit(end);
+            if ~contains(extension, "xls")
+                msg = sprintf(['Problem with argument handed to CLAswapImporter.' ...
+                    ' LIBOR_filename must point to a spreadsheet.']);
+                error(msg)
+            end
+
+
+            % Store the file name in the file name property
+            IMP.SOFR_filename = string(SOFR_filename);
+            IMP.LIBOR_filename = string(LIBOR_filename);
+
+
+        end
+
+        function IMP = importSOFR(IMP)
+            % Import the raw SOFR data into the SOFR_RAW table
+            %
+            %
+            %
+            %
+
+
+
+            vars = [...
+                "MONEY"	"datetime"
+                "USDSROISON"	"double";                 "USDSROISSW"	"double"
+                "USDSROIS2W"	"double";                 "USDSROIS1M"	"double"
+                "USDSROIS2M"	"double";                 "USDSROIS3M"	"double"
+                "USDSROIS4M"	"double";                 "USDSROIS5M"	"double"
+                "USDSROIS6M"	"double";                 "USDSROIS7M"	"double"
+                "USDSROIS8M"	"double";                 "USDSROIS9M"	"double"
+                "USDSROIS10M"	"double";                 "USDSROIS11M"	"double"
+                "USDSROIS1Y"	"double";                 "USDSROIS15M"	"double"
+                "USDSROIS18M"	"double";                 "USDSROIS21M"	"double"
+                "USDSROIS2Y"	"double";                 "USDSROIS3Y"	"double"
+                "USDSROIS4Y"	"double";                 "USDSROIS5Y"	"double"
+                "USDSROIS6Y"	"double";                 "USDSROIS7Y"	"double"
+                "USDSROIS8Y"	"double";                 "USDSROIS9Y"	"double"
+                "USDSROIS10Y"	"double";                 "USDSROIS11Y"	"double"
+                "USDSROIS12Y"	"double";                 "USDSROIS13Y"	"double"
+                "USDSROIS14Y"	"double";                 "USDSROIS15Y"	"double"
+                "USDSROIS20Y"	"double";                 "USDSROIS25Y"	"double"
+                "USDSROIS30Y"	"double";                 "USDSROIS35Y"	"double"
+                "USDSROIS40Y"	"double";                 "USDSROIS45Y"	"double"
+                "USDSROIS50Y"	"double"];
+            
+            % If row start and end points are not specified, define defaults
+            dataLines = [3, Inf];
+            
+            % Set up the Import Options and import the data
+            opts = spreadsheetImportOptions("NumVariables", 40);
+            
+            % Specify sheet and range
+            opts.Sheet = "Sheet2";
+            opts.DataRange = dataLines(1, :);
+            
+            % Specify column names and types
+            opts.VariableNames = vars(:,1);
+            opts.VariableTypes = vars(:,2);
+            
+            
+            % Import the data
+            if isempty(IMP.SOFR_filename)
+                msg = fprintf('No SOFR swap file set');
+                error(msg)
+            end
+
+            workbookFile = IMP.SOFR_filename;
+            SOFR_Swap = readtable(workbookFile, opts, "UseExcel", false);
+            
+            for idx = 2:size(dataLines, 1)
+                opts.DataRange = dataLines(idx, :);
+                tb = readtable(workbookFile, opts, "UseExcel", false);
+                SOFR_Swap = [SOFR_Swap; tb]; %#ok<AGROW>
+            end
+
+            IMP.SOFR_RAW = SOFR_Swap;
+        end
+
+        function IMP = makeTenorTabs(IMP)
+
+            tenorcell_SOFR = {...
+                "USDSROISON"	0.04
+                "USDSROISSW"	0.2
+                "USDSROIS2W"	0.5
+                "USDSROIS1M"	1
+                "USDSROIS2M"	2
+                "USDSROIS3M"	3
+                "USDSROIS4M"	4
+                "USDSROIS5M"	5
+                "USDSROIS6M"	6
+                "USDSROIS7M"	7
+                "USDSROIS8M"	8
+                "USDSROIS9M"	9
+                "USDSROIS10M"	10
+                "USDSROIS11M"	11
+                "USDSROIS1Y"	12
+                "USDSROIS15M"	15
+                "USDSROIS18M"	18
+                "USDSROIS21M"	21
+                "USDSROIS2Y"	24
+                "USDSROIS3Y"	36
+                "USDSROIS4Y"	48
+                "USDSROIS5Y"	60
+                "USDSROIS6Y"	72
+                "USDSROIS7Y"	84
+                "USDSROIS8Y"	96
+                "USDSROIS9Y"	108
+                "USDSROIS10Y"	120
+                "USDSROIS11Y"	132
+                "USDSROIS12Y"	144
+                "USDSROIS13Y"	156
+                "USDSROIS14Y"	168
+                "USDSROIS15Y"	180
+                "USDSROIS20Y"	240
+                "USDSROIS25Y"	300
+                "USDSROIS30Y"	360
+                "USDSROIS35Y"	420
+                "USDSROIS40Y"	480
+                "USDSROIS45Y"	540
+                "USDSROIS50Y"	600};
+
+            IMP.SOFR_tenorTab = cell2table(tenorcell_SOFR,...
+                'variableNames',{'SOFR_SeriesName','Months'});
+
+            tenorcell_LIBOR = {...
+                "USDAM3L1Y"	    12.00
+                "USDAM3L2Y"	    24.00
+                "USDAM3L3Y"	    36.00
+                "USDAM3L4Y"	    48.00
+                "USDAM3L5Y"	    60.00
+                "USDAM3L6Y"	    72.00
+                "USDAM3L7Y"	    84.00
+                "USDAM3L8Y"	    96.00
+                "USDAM3L9Y"	    108.00
+                "USDAM3L10Y"	120.00
+                "USDAM3L12Y"	144.00
+                "USDAM3L15Y"	180.00
+                "USDAM3L20Y"	240.00
+                "USDAM3L25Y"	300.00
+                "USDAM3L30Y"	360.00
+                "USDAM3L40Y"	480.00
+                "USDAM3L50Y"	600.00};
+
+            IMP.LIBOR_tenorTab = cell2table(tenorcell_LIBOR,...
+                'variableNames',{'LIBOR_SeriesName','Months'});            
+
+
+
+
+
+
+        end
+    
+        function IMP = importLIBOR(IMP)
+
+            vars = [...
+                "MONEY",	    "datetime"; "USDBKGD",	"string";
+                "USDAM3L1Y",	"double";   "USDAM3L1Y1",	"double";
+                "USDAM3L2Y",	"double";   "USDAM3L3Y",	"double";
+                "USDAM3L4Y",	"double";   "USDAM3L5Y",	"double";
+                "USDAM3L6Y",	"double";   "USDAM3L7Y",	"double";
+                "USDAM3L8Y",	"double";   "USDAM3L9Y",	"double";
+                "USDAM3L10Y",	"double";   "USDAM3L12Y",	"double";
+                "USDAM3L15Y",	"double";   "USDAM3L20Y",	"double";
+                "USDAM3L25Y",	"double";   "USDAM3L30Y",	"double";
+                "USDAM3L40Y",	"double";   "USDAM3L50Y",	"double"];
+
+            % Set workbook file
+            if isempty(IMP.LIBOR_filename)
+                msg = fprintf('No libor swap file set');
+                error(msg)
+            end
+            workbookFile = IMP.LIBOR_filename;
+
+            % If no sheet is specified, read from Sheet2
+            sheetName = "Sheet2";
+            
+            % If row start and end points are not specified, define defaults
+            dataLines = [3, Inf];
+            
+            % Set up the Import Options and import the data
+            opts = spreadsheetImportOptions("NumVariables", 20);
+            
+            % Specify sheet and range
+            opts.Sheet = sheetName;
+            opts.DataRange = dataLines(1, :);
+
+            % Specify column names and types
+            opts.VariableNames = vars(:,1);
+            opts.VariableTypes = vars(:,2);
+
+            % Specify variable properties
+            opts = setvaropts(opts, "USDBKGD", "WhitespaceRule", "preserve");
+            opts = setvaropts(opts, "USDBKGD", "EmptyFieldRule", "auto");
+            
+            % Import the data
+            IMP.LIBOR_RAW = readtable(workbookFile, opts, "UseExcel", false);
+            
+            for idx = 2:size(dataLines, 1)
+                opts.DataRange = dataLines(idx, :);
+                tb = readtable(workbookFile, opts, "UseExcel", false);
+                IMP.LIBOR_RAW = [IMP.LIBOR_RAW; tb]; %#ok<AGROW>
+            end            
+
+
+
+
+
+        end
+    
+        function IMP = createSOFRTable(IMP)
+            % createSOFRTable
+            %
+            % creates the SOFR table by interpolating the full swap curve
+            %
+            %
+            %
+
+            % Make sure we have the tenor tables already created
+            if isempty(IMP.SOFR_tenorTab)
+                msg = sprintf(['you have not created the SOFR tenor table ' ...
+                    'yet for this CLAswapImporter. Run .matTenorTabs and try again.']);
+                error(msg)
+            end
+
+            % Set the range for interpoloation
+            min_months = 0.04;
+            max_months = 600;
+
+            % Get the imported (RAW) data to interpolate
+            R = IMP.SOFR_RAW;
+
+            % Initialize
+            I = NaN(size(R,1),max(IMP.SOFR_tenorTab.Months+1));
+            x_data = IMP.SOFR_tenorTab.Months';
+            x_interped = [min_months,1:max_months];
+
+            % Loop through row by row (date by date) and interpoloate each
+            % row of the raw table
+            for i = 1:size(I,1)
+                % make sure we don't grab any NaN data
+                idx_NonNaNs = ~isnan(R{i,IMP.SOFR_tenorTab.SOFR_SeriesName});
+                v_data = R{i,IMP.SOFR_tenorTab.SOFR_SeriesName};
+                v_interped = max(0,interp1(x_data(idx_NonNaNs),v_data(idx_NonNaNs),x_interped,'linear','extrap'));
+                I(i,:) = v_interped;
+            end
+
+            % Turn the matrix with the full interpolated data into a table
+            vns_s = strcat("SOFRSWAP_",string(floor(x_interped)));
+            s = array2table(I,'VariableNames',vns_s);
+            s.SWAPDATE = datenum(R.MONEY);
+            s = movevars(s, "SWAPDATE", "Before", 1);
+
+            % Store interpolated table
+            IMP.SOFR = s;
+
+
+        end
+    
+        function IMP = createLIBORTable(IMP)
+            % createLIBORTable
+            %
+            % creates the LIBOR table by interpolating the full swap curve
+            %
+            %
+            %
+
+            % Make sure we have the tenor tables already created
+            if isempty(IMP.LIBOR_tenorTab)
+                msg = sprintf(['you have not created the LIBOR tenor table ' ...
+                    'yet for this CLAswapImporter. Run .matTenorTabs and try again.']);
+                error(msg)
+            end
+
+
+            % Set the range for interpoloation
+            min_months = 0.04;
+            max_months = 600;
+
+            % Get the imported (RAW) data to interpolate
+            R = IMP.LIBOR_RAW;
+
+            % Initialize
+            I = NaN(size(R,1),max(IMP.LIBOR_tenorTab.Months+1));
+            x_data = IMP.LIBOR_tenorTab.Months';
+            x_interped = [min_months,1:max_months];
+
+            % Loop through row by row (date by date) and interpoloate each
+            % row of the raw table
+            for i = 1:size(I,1)
+                % make sure we don't grab any NaN data
+                idx_NonNaNs = ~isnan(R{i,IMP.LIBOR_tenorTab.LIBOR_SeriesName});
+                v_data = R{i,IMP.LIBOR_tenorTab.LIBOR_SeriesName};
+                v_interped = max(0,interp1(x_data(idx_NonNaNs),v_data(idx_NonNaNs),x_interped,'linear','extrap'));
+                I(i,:) = v_interped;
+            end
+
+            % Turn the matrix with the full interpolated data into a table
+            vns_s = strcat("LIBORSWAP_",string(floor(x_interped)));
+            s = array2table(I,'VariableNames',vns_s);
+            s.SWAPDATE = datenum(R.MONEY);
+            s = movevars(s, "SWAPDATE", "Before", 1);
+
+
+            % Store interpolated table
+            IMP.LIBOR = s;
+
+
+
+
+
+
+        end
+    
+    end
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>chkTAXTAB</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="chkTAXTAB.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [TAXTABSOK] = chkTAXTAB(S)
+<span class="comment">% chkTAXTAB</span>
+<span class="comment">%</span>
+<span class="comment">% checks that the structure provided (S) is in fact an acceptable</span>
+<span class="comment">% TAXONOMYTABS structure</span>
+<span class="comment">%</span>
+<span class="comment">% Returns true (if it's ok) or false (if not)</span>
+<span class="comment">%</span>
+
+<span class="comment">% Initialize as False</span>
+TAXTABSOK = false;
+
+<span class="comment">% Build CHK Table Holding the Field Names and the Object Classes</span>
+CHK = rows2vars(<span class="keyword">...</span>
+   varfun(@(x) string(x),<span class="keyword">...</span>
+   struct2table(structfun(@(x) class(x),S,<span class="string">'UniformOutput'</span>,false))<span class="keyword">...</span>
+   )<span class="keyword">...</span>
+   );
+
+<span class="comment">% If there was nothing in the DATA.mat file, we throw an error</span>
+<span class="keyword">if</span> isempty(CHK)
+    msg = sprintf(<span class="string">'The structure was empty.\n'</span>);
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+CHK.Properties.VariableNames = {<span class="string">'TableName'</span>,<span class="string">'ObjectClass'</span>};
+CHK.TableName = strrep(CHK.TableName,<span class="string">"Fun_"</span>,<span class="string">""</span>);
+
+<span class="comment">% Check we have all the necessary fieldnames and that they are each a table</span>
+<span class="comment">% if anything is wrong (i.e., missing a field name or a field name is not a</span>
+<span class="comment">% table), we stop and return, the output of the function will be false (the</span>
+<span class="comment">% initial value set above).</span>
+necessaryFNs = {
+<span class="string">'accrual_status'</span>
+<span class="string">'amortization_type'</span>
+<span class="string">'Collateral_Type'</span>
+<span class="string">'cre_constructiontype'</span>
+<span class="string">'cre_occupancytype'</span>
+<span class="string">'cre_propertytype'</span>
+<span class="string">'Index'</span>
+<span class="string">'Loan_LGD'</span>
+<span class="string">'Line_of_Business'</span>
+<span class="string">'Loan_Type'</span>
+<span class="string">'Loan_Origination_Status'</span>
+<span class="string">'pricing_structure'</span>
+<span class="string">'Risk_Rating'</span>
+<span class="string">'SBA_Loan_Product_Type'</span>
+<span class="string">'Facility_Syndication_Status'</span>
+<span class="string">'LocationDatabase'</span>};
+
+<span class="keyword">for</span> n = 1:length(necessaryFNs)
+
+    fn = char(necessaryFNs{n});
+    hasField = ismember(fn,fieldnames(S));
+
+    <span class="keyword">if</span> hasField
+        istable = isa(S.(fn),<span class="string">"table"</span>);
+    <span class="keyword">else</span>
+        istable = false;
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> ~all([hasField,istable])
+        <span class="keyword">return</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="comment">% If we go through each of the fields and are ok, then it looks like we</span>
+<span class="comment">% have a TAXONOMYTABS structure, and we're ok.</span>
+TAXTABSOK = true;
+
+
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [TAXTABSOK] = chkTAXTAB(S)
+% chkTAXTAB
+%
+% checks that the structure provided (S) is in fact an acceptable
+% TAXONOMYTABS structure
+% 
+% Returns true (if it's ok) or false (if not)
+%
+
+% Initialize as False
+TAXTABSOK = false;
+
+% Build CHK Table Holding the Field Names and the Object Classes
+CHK = rows2vars(...
+   varfun(@(x) string(x),...
+   struct2table(structfun(@(x) class(x),S,'UniformOutput',false))...
+   )...
+   );
+
+% If there was nothing in the DATA.mat file, we throw an error
+if isempty(CHK)
+    msg = sprintf('The structure was empty.\n');
+    return
+end
+CHK.Properties.VariableNames = {'TableName','ObjectClass'};
+CHK.TableName = strrep(CHK.TableName,"Fun_","");
+
+% Check we have all the necessary fieldnames and that they are each a table
+% if anything is wrong (i.e., missing a field name or a field name is not a
+% table), we stop and return, the output of the function will be false (the
+% initial value set above).
+necessaryFNs = {
+'accrual_status'
+'amortization_type'
+'Collateral_Type'
+'cre_constructiontype'
+'cre_occupancytype'
+'cre_propertytype'
+'Index'
+'Loan_LGD'
+'Line_of_Business'
+'Loan_Type'
+'Loan_Origination_Status'
+'pricing_structure'
+'Risk_Rating'
+'SBA_Loan_Product_Type'
+'Facility_Syndication_Status'
+'LocationDatabase'};
+
+for n = 1:length(necessaryFNs)
+    
+    fn = char(necessaryFNs{n});
+    hasField = ismember(fn,fieldnames(S));
+
+    if hasField
+        istable = isa(S.(fn),"table");
+    else
+        istable = false;
+    end
+    
+    if ~all([hasField,istable])
+        return
+    end
+
+end
+
+% If we go through each of the fields and are ok, then it looks like we
+% have a TAXONOMYTABS structure, and we're ok.
+TAXTABSOK = true;
+
+
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

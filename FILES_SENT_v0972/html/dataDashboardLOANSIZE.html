@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>dataDashboardLOANSIZE</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="dataDashboardLOANSIZE.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [NOTESLEFTTITLE,NOTESLEFTDATA,LEFTCHART,LEFTCHARTTITLE,RIGHTCHART,RIGHTCHARTTITLE,<span class="keyword">...</span>
+BOTTOMRIGHTCHART,BOTTOMRIGHTCHARTTITLE,DASHBOARDTITLE,DASHBOARDsubTITLE] = dataDashboardLOANSIZE(D)
+<span class="comment">% dataDashboardLOANSIZE</span>
+<span class="comment">%</span>
+<span class="comment">% Returns inputs to create dashboard for loan size analysis (data checking)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+
+
+varname = <span class="string">'F_Commitment_Amount'</span>;
+vnclean = strrep(varname,<span class="string">"_"</span>,<span class="string">" "</span>);
+maxLoanSize = max((D.(varname)));
+maxLoanSizeFormatted = regexprep(num2str(maxLoanSize),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+minLoanSize = min((D.(varname)));
+minLoanSizeFormatted = regexprep(num2str(minLoanSize),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+[r,q] = iqr(D.(varname));
+format_25th = regexprep(num2str(round(q(1),0)),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+format_75th = regexprep(num2str(round(q(2),0)),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+zerocount = sum(D.(varname)==0);
+format_zerocount = regexprep(num2str(zerocount),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+lessThan1000count = sum(D.(varname)&lt;1000);
+format_lessThan1000 = regexprep(num2str(lessThan1000count),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+moreThan100MMcount = sum(D.(varname)&gt;100000000);
+format_moreThan100MM = regexprep(num2str(moreThan100MMcount),<span class="string">'\d{1,3}(?=(\d{3})+\&gt;)'</span>,<span class="string">'$&amp;,'</span>);
+
+
+<span class="comment">% Create Dashboard</span>
+<span class="comment">% Title</span>
+DASHBOARDTITLE = <span class="string">"Loan Size (Commitment Size)"</span>;
+DASHBOARDsubTITLE = string(sprintf(<span class="string">'Analysis of loan size data.'</span>));
+
+<span class="comment">% Top Left Chart</span>
+LEFTCHARTTITLE = <span class="string">"Histogram of Commitment Amounts"</span>;
+LEFTCHART = struct();
+LEFTCHART.ChartType = <span class="string">'Histogram'</span>;
+LEFTCHART.X = D.F_Commitment_Amount;
+LEFTCHART.xlab = <span class="string">"Commitment Amount"</span>;
+LEFTCHART.ylab = <span class="string">"Count of Observations"</span>;
+LEFTCHART.ax = <span class="string">'UIAxes_ChartLeft'</span>;
+
+
+<span class="comment">% Top Right Chart</span>
+RIGHTCHARTTITLE = <span class="string">"Histogram of Largest 10% of Commitment Amounts"</span>;
+RIGHTCHART = struct();
+RIGHTCHART.ChartType = <span class="string">'Histogram'</span>;
+rightx = maxk(D.F_Commitment_Amount, floor(0.1 .* size(D,1)));
+RIGHTCHART.X = rightx;
+RIGHTCHART.xlab = <span class="string">"Commitment Amount"</span>;
+RIGHTCHART.ylab = <span class="string">"Count of Observations"</span>;
+RIGHTCHART.ax = <span class="string">'UIAxes_ChartRight'</span>;
+
+<span class="comment">% Bottom Right Chart</span>
+BOTTOMRIGHTCHARTTITLE = <span class="string">"Box &amp; Whisker Chart of Commitment Amounts"</span>;
+BOTTOMRIGHTCHART = struct();
+BOTTOMRIGHTCHART.ChartType = <span class="string">'Box'</span>;
+BOTTOMRIGHTCHART.GrpData = D.L_pricing_structure;
+BOTTOMRIGHTCHART.X = D.F_Commitment_Amount;
+BOTTOMRIGHTCHART.xlab = <span class="string">"Pricing Structure"</span>;
+BOTTOMRIGHTCHART.ylab = <span class="string">"Loan Size"</span>;
+BOTTOMRIGHTCHART.ax = <span class="string">'UIAxes_ChartBottomRight'</span>;
+
+
+<span class="comment">% Left Data Panel</span>
+NOTESLEFTTITLE = <span class="string">"Key Distribution Data."</span>;
+NOTESLEFTDATA = struct();
+NOTESLEFTDATA.titles.title1 = sprintf(<span class="string">'Maximum Loan Size'</span>);
+NOTESLEFTDATA.data.data1 = maxLoanSizeFormatted;
+
+NOTESLEFTDATA.titles.title2 = sprintf(<span class="string">'Minimum Loan Size'</span>);
+NOTESLEFTDATA.data.data2 = minLoanSizeFormatted;
+
+NOTESLEFTDATA.titles.title3 = sprintf(<span class="string">'25th Percentile'</span>);
+NOTESLEFTDATA.data.data3 = format_25th;
+
+NOTESLEFTDATA.titles.title4 = sprintf(<span class="string">'75th Percentile'</span>);
+NOTESLEFTDATA.data.data4 = format_75th;
+
+NOTESLEFTDATA.titles.title5 = sprintf(<span class="string">'Number of observations with $0 commitment amount'</span>);
+NOTESLEFTDATA.data.data5 = format_zerocount;
+
+NOTESLEFTDATA.titles.title6 = sprintf(<span class="string">'Number of observations with commitment less than $1,000'</span>);
+NOTESLEFTDATA.data.data6 = format_lessThan1000;
+
+NOTESLEFTDATA.titles.title7 = sprintf(<span class="string">'Number of obs. with commitment greater than $100MM'</span>);
+NOTESLEFTDATA.data.data7 = format_moreThan100MM;
+
+
+
+
+
+
+
+
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [NOTESLEFTTITLE,NOTESLEFTDATA,LEFTCHART,LEFTCHARTTITLE,RIGHTCHART,RIGHTCHARTTITLE,...
+BOTTOMRIGHTCHART,BOTTOMRIGHTCHARTTITLE,DASHBOARDTITLE,DASHBOARDsubTITLE] = dataDashboardLOANSIZE(D)
+% dataDashboardLOANSIZE
+%
+% Returns inputs to create dashboard for loan size analysis (data checking)
+%
+%
+%
+%
+
+
+varname = 'F_Commitment_Amount';
+vnclean = strrep(varname,"_"," ");
+maxLoanSize = max((D.(varname)));
+maxLoanSizeFormatted = regexprep(num2str(maxLoanSize),'\d{1,3}(?=(\d{3})+\>)','$&,');
+minLoanSize = min((D.(varname)));
+minLoanSizeFormatted = regexprep(num2str(minLoanSize),'\d{1,3}(?=(\d{3})+\>)','$&,');
+[r,q] = iqr(D.(varname));
+format_25th = regexprep(num2str(round(q(1),0)),'\d{1,3}(?=(\d{3})+\>)','$&,');
+format_75th = regexprep(num2str(round(q(2),0)),'\d{1,3}(?=(\d{3})+\>)','$&,');
+zerocount = sum(D.(varname)==0);
+format_zerocount = regexprep(num2str(zerocount),'\d{1,3}(?=(\d{3})+\>)','$&,');
+lessThan1000count = sum(D.(varname)<1000);
+format_lessThan1000 = regexprep(num2str(lessThan1000count),'\d{1,3}(?=(\d{3})+\>)','$&,');
+moreThan100MMcount = sum(D.(varname)>100000000);
+format_moreThan100MM = regexprep(num2str(moreThan100MMcount),'\d{1,3}(?=(\d{3})+\>)','$&,');
+
+
+% Create Dashboard
+% Title
+DASHBOARDTITLE = "Loan Size (Commitment Size)";
+DASHBOARDsubTITLE = string(sprintf('Analysis of loan size data.'));
+
+% Top Left Chart
+LEFTCHARTTITLE = "Histogram of Commitment Amounts";
+LEFTCHART = struct();
+LEFTCHART.ChartType = 'Histogram';
+LEFTCHART.X = D.F_Commitment_Amount;
+LEFTCHART.xlab = "Commitment Amount";
+LEFTCHART.ylab = "Count of Observations";
+LEFTCHART.ax = 'UIAxes_ChartLeft';
+
+
+% Top Right Chart
+RIGHTCHARTTITLE = "Histogram of Largest 10% of Commitment Amounts";
+RIGHTCHART = struct();
+RIGHTCHART.ChartType = 'Histogram';
+rightx = maxk(D.F_Commitment_Amount, floor(0.1 .* size(D,1)));
+RIGHTCHART.X = rightx;
+RIGHTCHART.xlab = "Commitment Amount";
+RIGHTCHART.ylab = "Count of Observations";
+RIGHTCHART.ax = 'UIAxes_ChartRight';
+
+% Bottom Right Chart
+BOTTOMRIGHTCHARTTITLE = "Box & Whisker Chart of Commitment Amounts";
+BOTTOMRIGHTCHART = struct();
+BOTTOMRIGHTCHART.ChartType = 'Box';
+BOTTOMRIGHTCHART.GrpData = D.L_pricing_structure;
+BOTTOMRIGHTCHART.X = D.F_Commitment_Amount;
+BOTTOMRIGHTCHART.xlab = "Pricing Structure";
+BOTTOMRIGHTCHART.ylab = "Loan Size";
+BOTTOMRIGHTCHART.ax = 'UIAxes_ChartBottomRight';
+
+
+% Left Data Panel
+NOTESLEFTTITLE = "Key Distribution Data.";
+NOTESLEFTDATA = struct();
+NOTESLEFTDATA.titles.title1 = sprintf('Maximum Loan Size');
+NOTESLEFTDATA.data.data1 = maxLoanSizeFormatted;
+
+NOTESLEFTDATA.titles.title2 = sprintf('Minimum Loan Size');
+NOTESLEFTDATA.data.data2 = minLoanSizeFormatted;
+
+NOTESLEFTDATA.titles.title3 = sprintf('25th Percentile');
+NOTESLEFTDATA.data.data3 = format_25th;
+
+NOTESLEFTDATA.titles.title4 = sprintf('75th Percentile');
+NOTESLEFTDATA.data.data4 = format_75th;
+
+NOTESLEFTDATA.titles.title5 = sprintf('Number of observations with $0 commitment amount');
+NOTESLEFTDATA.data.data5 = format_zerocount;
+
+NOTESLEFTDATA.titles.title6 = sprintf('Number of observations with commitment less than $1,000');
+NOTESLEFTDATA.data.data6 = format_lessThan1000;
+
+NOTESLEFTDATA.titles.title7 = sprintf('Number of obs. with commitment greater than $100MM');           
+NOTESLEFTDATA.data.data7 = format_moreThan100MM;
+
+
+
+
+
+
+
+
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>getFileDates</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="getFileDates.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [outputArg1,outputArg2] = getFileDates(inputArg1,inputArg2,varargin)
+<span class="comment">% getFileDates</span>
+<span class="comment">%</span>
+<span class="comment">% Function receives a number of (at least 2) CLAdataTable class data</span>
+<span class="comment">% objects and returns:</span>
+<span class="comment">% -</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+
+<span class="comment">% Find out how many input files there are.</span>
+inputDataTables = {inputArg1,inputArg2,varargin{:,:}};
+nInputs = numel(inputDataTables);
+
+<span class="comment">% Check that all input files are CLAdataTable class objects and have</span>
+<span class="comment">% 'file_date' as a variable</span>
+T = array2table(false([nInputs,2]),<span class="string">'VariableNames'</span>,{<span class="string">'ClassOK'</span>,<span class="string">'HasFileDate'</span>});
+T.InputName = strings(nInputs,1);
+T = movevars(T, <span class="string">"InputName"</span>, <span class="string">"Before"</span>,1);
+T.file_dates = cell(nInputs,1);
+
+
+<span class="keyword">for</span> c = 1:nInputs
+
+    dt = inputDataTables{c};
+    T.ClassOK(c) = strcmpi(class(dt),<span class="string">'CLAdataTable'</span>);
+
+    <span class="comment">% If we have the correct class object, get the other information</span>
+    <span class="keyword">if</span> T.ClassOK(c)
+        T.HasFileDate(c) = ismember({<span class="string">'file_date'</span>},dt.VariableNames);
+        T.InputName(c) = inputname(c);
+
+        <span class="comment">% If the input argument has a file date field, then get the file</span>
+        <span class="comment">% dates and store them in the outgoing table.  If not, we will</span>
+        <span class="comment">% return an error below.</span>
+        <span class="keyword">if</span> T.HasFileDate(c)
+            idx_filedate = strcmpi(<span class="string">"file_date"</span>,string(dt.VariableNames));
+            T.file_dates{c} = unique(dt.DataMat(:,idx_filedate));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+dataOK = all(all(T{:,{<span class="string">'ClassOK'</span>,<span class="string">'HasFileDate'</span>}}));
+<span class="keyword">if</span> ~dataOK
+
+    msg = sprintf([<span class="string">'Data inputs to GETFILEDATES are incorrect. Either one or '</span> <span class="keyword">...</span>
+        <span class="string">'more data inputs are not CLAdataTable class objects, or one or more '</span> <span class="keyword">...</span>
+        <span class="string">'data inputs do not have "file_date" as a variable name.'</span>]);
+    error(msg)
+<span class="keyword">end</span>
+
+<span class="comment">% If we do not return an error, extract the file dates from the output</span>
+<span class="comment">% table.</span>
+intersect_filedates = T.file_dates{1};
+<span class="keyword">for</span> n = 2:nInputs
+    intersect_filedates = intersect(intersect_filedates,T.file_dates{n});
+<span class="keyword">end</span>
+
+outputArg1 = intersect_filedates;
+outputArg2 = T;
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [outputArg1,outputArg2] = getFileDates(inputArg1,inputArg2,varargin)
+% getFileDates
+% 
+% Function receives a number of (at least 2) CLAdataTable class data
+% objects and returns:
+% - 
+%
+%
+
+% Find out how many input files there are.
+inputDataTables = {inputArg1,inputArg2,varargin{:,:}};
+nInputs = numel(inputDataTables);
+
+% Check that all input files are CLAdataTable class objects and have
+% 'file_date' as a variable
+T = array2table(false([nInputs,2]),'VariableNames',{'ClassOK','HasFileDate'});
+T.InputName = strings(nInputs,1);
+T = movevars(T, "InputName", "Before",1);
+T.file_dates = cell(nInputs,1);
+
+
+for c = 1:nInputs
+
+    dt = inputDataTables{c};
+    T.ClassOK(c) = strcmpi(class(dt),'CLAdataTable');
+
+    % If we have the correct class object, get the other information
+    if T.ClassOK(c)
+        T.HasFileDate(c) = ismember({'file_date'},dt.VariableNames);
+        T.InputName(c) = inputname(c);
+
+        % If the input argument has a file date field, then get the file
+        % dates and store them in the outgoing table.  If not, we will
+        % return an error below.
+        if T.HasFileDate(c)
+            idx_filedate = strcmpi("file_date",string(dt.VariableNames));
+            T.file_dates{c} = unique(dt.DataMat(:,idx_filedate));
+        end
+    end
+
+end
+dataOK = all(all(T{:,{'ClassOK','HasFileDate'}}));
+if ~dataOK
+
+    msg = sprintf(['Data inputs to GETFILEDATES are incorrect. Either one or ' ...
+        'more data inputs are not CLAdataTable class objects, or one or more ' ...
+        'data inputs do not have "file_date" as a variable name.']);
+    error(msg)
+end
+
+% If we do not return an error, extract the file dates from the output
+% table.
+intersect_filedates = T.file_dates{1};
+for n = 2:nInputs
+    intersect_filedates = intersect(intersect_filedates,T.file_dates{n});
+end
+
+outputArg1 = intersect_filedates;
+outputArg2 = T;
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>CLAdataTable</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="CLAdataTable.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">classdef</span> CLAdataTable
+    <span class="comment">% CLAdataTable</span>
+    <span class="comment">%</span>
+    <span class="comment">%   Holds all numeric table in a more efficient format.  CLAdataTable</span>
+    <span class="comment">%   class objects cannot hold any string, cell, or other non numeric</span>
+    <span class="comment">%   formats of data.</span>
+    <span class="comment">%</span>
+
+    <span class="keyword">properties</span>
+         DataMat            <span class="comment">% A numerical data matrix holding the data for</span>
+                            <span class="comment">% the data table.  The columns of the matrix</span>
+                            <span class="comment">% must correspond to data fields.</span>
+
+         VariableNames      <span class="comment">% A list of variable names for each of the</span>
+                            <span class="comment">% columns of the Data Matrix.</span>
+
+         DateVars           <span class="comment">% An optional list of variables that are</span>
+                            <span class="comment">% numeric representations of dates</span>
+
+         TaxonomyTabs       <span class="comment">% TaxonomyTabs is a data structure holding</span>
+                            <span class="comment">% MATLAB tables.  Each table must be named with</span>
+                            <span class="comment">% a variable held in VariableNames. All tables</span>
+                            <span class="comment">% in the structure must:</span>
+                            <span class="comment">% (1) have only two variables, one with the</span>
+                            <span class="comment">% variable ID (named VariableNameID) and the</span>
+                            <span class="comment">% other with the translation of the variable ID</span>
+                            <span class="comment">% to a categorical variable.</span>
+                            <span class="comment">% (2) IDs must be numeric and be limited to the</span>
+                            <span class="comment">% numbers held in the DataMat under the</span>
+                            <span class="comment">% variable named in the table</span>
+
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">methods</span>
+        <span class="keyword">function</span> OBJ = CLAdataTable(DataMatrix,varargin)
+            <span class="comment">% CLAdataTable(...)</span>
+            <span class="comment">% CREATE AN INSTANCE of a CLAdataTable class object. Takes a</span>
+            <span class="comment">% mandatory DataMatrix argument holding the DataMat</span>
+            <span class="comment">% property, and takes several optional arguments.</span>
+            <span class="comment">%</span>
+            <span class="comment">%</span>
+
+
+            <span class="comment">% Set the required DataMatrix property argument</span>
+            OBJ.DataMat = DataMatrix;
+
+            <span class="comment">% Get any optional arguments and set properties accordingly</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% VariableNames</span>
+            <span class="comment">% Add optional input for VariableNames</span>
+            def = cellstr(strcat(<span class="string">"Var"</span>,num2str([1:size(OBJ.DataMat,2)]'))');
+            addParameter(p,<span class="string">'VariableNames'</span>,def,@(x) iscell(x));
+
+            <span class="comment">% DateVars</span>
+            <span class="comment">% Add optional input for DateVars</span>
+            def = {};
+            addParameter(p,<span class="string">'DateVars'</span>,def,@(x) iscell(x));
+
+
+            <span class="comment">% TaxonomyTabs</span>
+            <span class="comment">% Add optional input for TaxonomyTabs</span>
+            def = struct();
+            addParameter(p,<span class="string">'TaxonomyTabs'</span>,def,@(x) isstruct(x));
+
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            OBJ.VariableNames = p.Results.VariableNames;
+            OBJ.DateVars = p.Results.DateVars;
+            OBJ.TaxonomyTabs = p.Results.TaxonomyTabs;
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> t = GimmeCLATable(OBJ,VariableList,varargin)
+            <span class="comment">% Returns a table corresponding to the matrix returned using</span>
+            <span class="comment">% gimmematrix</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Get any optional arguments</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% DataRange</span>
+            <span class="comment">% Add optional input for DataRange</span>
+            def = [1,size(OBJ.DataMat,1)];
+            addParameter(p,<span class="string">'DataRange'</span>,def,@(x) isvector(x));
+
+            <span class="comment">% DateList</span>
+            <span class="comment">% Add optional input for DataRange (all dates)</span>
+            alldates = OBJ.DataMat(:,strcmpi(OBJ.VariableNames,<span class="string">"file_date"</span>));
+            def = alldates;
+            addParameter(p,<span class="string">'DateList'</span>,def,@(x) isnumeric(x));
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            DataRange = p.Results.DataRange;
+            DateList = p.Results.DateList;
+
+            <span class="comment">% Create the desired numerical matrix</span>
+            [m,~,idx_cols] = GimmeCLAmatrix(OBJ,VariableList,<span class="string">'DataRange'</span>,DataRange,<span class="string">'DateList'</span>,DateList);
+
+            <span class="comment">% Convert the matrix to a table</span>
+            varnames = OBJ.VariableNames(idx_cols);
+            t = array2table(m,<span class="string">'VariableNames'</span>,varnames);
+
+
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> [m,idx_rows,idx_cols] = GimmeCLAmatrix(OBJ,VariableList,varargin)
+            <span class="comment">% Returns a vector or column matrix of the CLA Data depending</span>
+            <span class="comment">% on arguments provided</span>
+            <span class="comment">%</span>
+
+            <span class="comment">% Get any optional arguments</span>
+            <span class="comment">% Set the input parser</span>
+            p = inputParser;
+
+            <span class="comment">% DataRange</span>
+            <span class="comment">% Add optional input for DataRange</span>
+            def = [1,size(OBJ.DataMat,1)];
+            addParameter(p,<span class="string">'DataRange'</span>,def,@(x) isvector(x));
+
+            <span class="comment">% DateList</span>
+            <span class="comment">% Add optional input for DataRange (all dates)</span>
+            alldates = OBJ.DataMat(:,strcmpi(OBJ.VariableNames,<span class="string">"file_date"</span>));
+            def = alldates;
+            addParameter(p,<span class="string">'DateList'</span>,def,@(x) isnumeric(x));
+
+            <span class="comment">% Parse and set results</span>
+            parse(p,varargin{:});
+            DataRange = p.Results.DataRange;
+            DateList = p.Results.DateList;
+
+            <span class="comment">% Limit the returned matrix to the desired DataRange (if no</span>
+            <span class="comment">% DataRange is given, all rows will be returned, or, if a</span>
+            <span class="comment">% DateList is given, that will limit the rows).</span>
+            <span class="comment">% If only a single datarange index is given, just return that</span>
+            <span class="comment">% index, otherwise return the full set from beginning to end</span>
+            <span class="keyword">if</span> numel(DataRange)&gt;1
+                idx_rows = [DataRange(1):DataRange(2)];
+            <span class="keyword">else</span>
+                idx_rows = DataRange(1);
+            <span class="keyword">end</span>
+            assignin(<span class="string">"base"</span>,<span class="string">"idx_rows"</span>,idx_rows)
+
+            <span class="comment">% Limit the returned matrix to the desired DateList</span>
+            idx_datelist_rows = find(ismember(alldates,DateList));
+            idx_rows = intersect(idx_datelist_rows,idx_rows);
+
+
+            <span class="comment">% Find out which data series the user wants (as determined by</span>
+            <span class="comment">% the VariableList argument)</span>
+            <span class="keyword">if</span> or(VariableList == <span class="string">"All"</span>,VariableList == <span class="string">"ALL"</span>)
+                idx_cols = 1:length(OBJ.VariableNames);
+            <span class="keyword">else</span>
+                idx_cols = ismember(OBJ.VariableNames,VariableList);
+            <span class="keyword">end</span>
+
+            <span class="comment">% Pull out the appropriate columns of the data matrix</span>
+            m = OBJ.DataMat(idx_rows,idx_cols);
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+classdef CLAdataTable
+    % CLAdataTable
+    %
+    %   Holds all numeric table in a more efficient format.  CLAdataTable
+    %   class objects cannot hold any string, cell, or other non numeric
+    %   formats of data. 
+    %
+
+    properties
+         DataMat            % A numerical data matrix holding the data for
+                            % the data table.  The columns of the matrix
+                            % must correspond to data fields.
+
+         VariableNames      % A list of variable names for each of the 
+                            % columns of the Data Matrix.
+                  
+         DateVars           % An optional list of variables that are 
+                            % numeric representations of dates
+
+         TaxonomyTabs       % TaxonomyTabs is a data structure holding 
+                            % MATLAB tables.  Each table must be named with 
+                            % a variable held in VariableNames. All tables 
+                            % in the structure must:
+                            % (1) have only two variables, one with the 
+                            % variable ID (named VariableNameID) and the 
+                            % other with the translation of the variable ID
+                            % to a categorical variable.
+                            % (2) IDs must be numeric and be limited to the
+                            % numbers held in the DataMat under the
+                            % variable named in the table
+
+    
+    end
+
+    methods
+        function OBJ = CLAdataTable(DataMatrix,varargin)
+            % CLAdataTable(...)
+            % CREATE AN INSTANCE of a CLAdataTable class object. Takes a
+            % mandatory DataMatrix argument holding the DataMat
+            % property, and takes several optional arguments.
+            %
+            %
+
+
+            % Set the required DataMatrix property argument
+            OBJ.DataMat = DataMatrix;
+
+            % Get any optional arguments and set properties accordingly
+            % Set the input parser
+            p = inputParser;            
+            
+            % VariableNames
+            % Add optional input for VariableNames
+            def = cellstr(strcat("Var",num2str([1:size(OBJ.DataMat,2)]'))');
+            addParameter(p,'VariableNames',def,@(x) iscell(x));
+
+            % DateVars
+            % Add optional input for DateVars
+            def = {};
+            addParameter(p,'DateVars',def,@(x) iscell(x));
+
+
+            % TaxonomyTabs
+            % Add optional input for TaxonomyTabs
+            def = struct();
+            addParameter(p,'TaxonomyTabs',def,@(x) isstruct(x));
+
+
+            % Parse and set results
+            parse(p,varargin{:});
+            OBJ.VariableNames = p.Results.VariableNames;
+            OBJ.DateVars = p.Results.DateVars;
+            OBJ.TaxonomyTabs = p.Results.TaxonomyTabs;
+
+        end
+
+        function t = GimmeCLATable(OBJ,VariableList,varargin)
+            % Returns a table corresponding to the matrix returned using
+            % gimmematrix
+            % 
+
+            % Get any optional arguments
+            % Set the input parser
+            p = inputParser; 
+            
+            % DataRange
+            % Add optional input for DataRange
+            def = [1,size(OBJ.DataMat,1)];
+            addParameter(p,'DataRange',def,@(x) isvector(x));
+
+            % DateList
+            % Add optional input for DataRange (all dates)
+            alldates = OBJ.DataMat(:,strcmpi(OBJ.VariableNames,"file_date"));
+            def = alldates;
+            addParameter(p,'DateList',def,@(x) isnumeric(x));
+
+            % Parse and set results
+            parse(p,varargin{:});
+            DataRange = p.Results.DataRange;
+            DateList = p.Results.DateList;
+
+            % Create the desired numerical matrix
+            [m,~,idx_cols] = GimmeCLAmatrix(OBJ,VariableList,'DataRange',DataRange,'DateList',DateList);
+
+            % Convert the matrix to a table
+            varnames = OBJ.VariableNames(idx_cols);
+            t = array2table(m,'VariableNames',varnames);
+
+
+            
+        end
+
+        function [m,idx_rows,idx_cols] = GimmeCLAmatrix(OBJ,VariableList,varargin)
+            % Returns a vector or column matrix of the CLA Data depending
+            % on arguments provided
+            %
+
+            % Get any optional arguments
+            % Set the input parser
+            p = inputParser; 
+            
+            % DataRange
+            % Add optional input for DataRange
+            def = [1,size(OBJ.DataMat,1)];
+            addParameter(p,'DataRange',def,@(x) isvector(x));
+
+            % DateList
+            % Add optional input for DataRange (all dates)
+            alldates = OBJ.DataMat(:,strcmpi(OBJ.VariableNames,"file_date"));
+            def = alldates;
+            addParameter(p,'DateList',def,@(x) isnumeric(x));
+
+            % Parse and set results
+            parse(p,varargin{:});
+            DataRange = p.Results.DataRange;
+            DateList = p.Results.DateList;
+
+            % Limit the returned matrix to the desired DataRange (if no
+            % DataRange is given, all rows will be returned, or, if a
+            % DateList is given, that will limit the rows).
+            % If only a single datarange index is given, just return that
+            % index, otherwise return the full set from beginning to end
+            if numel(DataRange)>1
+                idx_rows = [DataRange(1):DataRange(2)];
+            else
+                idx_rows = DataRange(1);
+            end
+            assignin("base","idx_rows",idx_rows)
+
+            % Limit the returned matrix to the desired DateList
+            idx_datelist_rows = find(ismember(alldates,DateList));
+            idx_rows = intersect(idx_datelist_rows,idx_rows);
+            
+
+            % Find out which data series the user wants (as determined by
+            % the VariableList argument)
+            if or(VariableList == "All",VariableList == "ALL")
+                idx_cols = 1:length(OBJ.VariableNames);
+            else
+                idx_cols = ismember(OBJ.VariableNames,VariableList);
+            end
+
+            % Pull out the appropriate columns of the data matrix
+            m = OBJ.DataMat(idx_rows,idx_cols);
+
+        end
+
+    end
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

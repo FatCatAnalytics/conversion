@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>defDimensionsStruct</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="defDimensionsStruct.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [dimensions] = defDimensionsStruct(varargin)
+<span class="comment">%</span>
+<span class="comment">% defDimensionsStruct</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% -------------------------------------------------------------------------</span>
+
+<span class="comment">% If the user has passed a populated_grid table to populate, we use the</span>
+<span class="comment">% variables in that table (when available) as dimensions</span>
+<span class="keyword">if</span> ~isempty(varargin)
+    useInput = true;
+    T = varargin{1};
+    varNames = T.Properties.VariableNames;
+<span class="keyword">else</span>
+    useInput = false;
+<span class="keyword">end</span>
+
+<span class="comment">% Initialize</span>
+dimensions = struct();
+
+<span class="comment">% There is only one option for 'Lag' dimension</span>
+dimensions.Lag.gridvar = <span class="string">'Lag'</span>;
+dimensions.Lag.distvar = <span class="string">'Lag'</span>;
+
+<span class="comment">% There is only one option for 'FacilityType' dimension</span>
+dimensions.FacilityType.gridvar = <span class="string">'FacilityType'</span>;
+dimensions.FacilityType.distvar = <span class="string">'FacilityType'</span>;
+
+
+<span class="comment">% If the user provided a table, use the Loan Size option that is used in</span>
+<span class="comment">% the table provided</span>
+dimensions.LoanSize.gridvar = <span class="string">'LoanSizeGroup'</span>;
+<span class="keyword">if</span> useInput
+    LoanSizeVars = {<span class="string">'LoanSizeGroup'</span>,<span class="string">'LoanSize'</span>};
+    idx_LoanSizeVar = ismember(varNames,LoanSizeVars);
+    <span class="keyword">if</span> sum(idx_LoanSizeVar)&gt;1
+        warningmsg = sprintf([<span class="string">'More than one possible "Loan Size" variable in the '</span> <span class="keyword">...</span>
+            <span class="string">'input table. The dimensions structure will use the default variable.\n'</span>]);
+        warning(warningmsg)
+    <span class="keyword">elseif</span> sum(idx_LoanSizeVar) == 0
+        errormsg = sprintf([<span class="string">'The input table does not include a "Loan Size" variable. '</span> <span class="keyword">...</span>
+            <span class="string">'The dimensions structure will not be created.\n'</span>]);
+        error(errormsg)
+    <span class="keyword">elseif</span> sum(idx_LoanSizeVar) == 1
+        dimensions.LoanSize.distvar = varNames{idx_LoanSizeVar};
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    dimensions.LoanSize.distvar = <span class="string">'LoanSize'</span>;
+<span class="keyword">end</span>
+
+
+<span class="comment">% There is only one option for 'RiskCategories' dimension</span>
+dimensions.RiskCategories.gridvar = <span class="string">'RiskCategories'</span>;
+dimensions.RiskCategories.distvar = <span class="string">'RiskCategories'</span>;
+
+
+<span class="comment">% If the user provided a table, use the Term Categories Size option that is</span>
+<span class="comment">% used in the table provided</span>
+dimensions.TermCategories.gridvar = <span class="string">'TermCategories'</span>;
+<span class="keyword">if</span> useInput
+    TermVars = {<span class="string">'Term'</span>,<span class="string">'TermMonths'</span>,<span class="string">'TermCategories'</span>};
+    idx_TermVar = ismember(varNames,TermVars);
+    <span class="keyword">if</span> sum(idx_TermVar)&gt;1
+        warningmsg = sprintf([<span class="string">'More than one possible "Term" variable in the '</span> <span class="keyword">...</span>
+            <span class="string">'input table. The dimensions structure will use the default variable.\n'</span>]);
+        warning(warningmsg)
+    <span class="keyword">elseif</span> sum(idx_TermVar) == 0
+        errormsg = sprintf([<span class="string">'The input table does not include a "Term" variable. '</span> <span class="keyword">...</span>
+            <span class="string">'The dimensions structure will not be created.\n'</span>]);
+        error(errormsg)
+    <span class="keyword">elseif</span> sum(idx_TermVar) == 1
+        dimensions.TermCategories.distvar = varNames{idx_TermVar};
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    dimensions.TermCategories.distvar = <span class="string">'TermCategories'</span>;
+<span class="keyword">end</span>
+
+
+
+
+<span class="comment">% There is only one option for 'CollateralGroups' dimension</span>
+dimensions.CollateralGroups.gridvar = <span class="string">'CollateralGroups'</span>;
+dimensions.CollateralGroups.distvar = <span class="string">'CollateralGroups'</span>;
+
+<span class="comment">% There is only one option for 'IndustryGroups' dimension</span>
+dimensions.IndustryGroups.gridvar = <span class="string">'IndustryGroups'</span>;
+dimensions.IndustryGroups.distvar = <span class="string">'IndustryGroups'</span>;
+
+<span class="comment">% There is only one option for 'Geographies' dimension</span>
+dimensions.Geographies.gridvar = <span class="string">'Geographies'</span>;
+dimensions.Geographies.distvar = <span class="string">'Geographies'</span>;
+
+
+
+
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [dimensions] = defDimensionsStruct(varargin)
+% 
+% defDimensionsStruct
+%
+%
+%
+%
+%
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% If the user has passed a populated_grid table to populate, we use the
+% variables in that table (when available) as dimensions
+if ~isempty(varargin)
+    useInput = true;
+    T = varargin{1};
+    varNames = T.Properties.VariableNames;
+else
+    useInput = false;
+end
+
+% Initialize
+dimensions = struct();
+
+% There is only one option for 'Lag' dimension
+dimensions.Lag.gridvar = 'Lag';
+dimensions.Lag.distvar = 'Lag';
+
+% There is only one option for 'FacilityType' dimension
+dimensions.FacilityType.gridvar = 'FacilityType';
+dimensions.FacilityType.distvar = 'FacilityType';
+
+
+% If the user provided a table, use the Loan Size option that is used in
+% the table provided
+dimensions.LoanSize.gridvar = 'LoanSizeGroup';
+if useInput
+    LoanSizeVars = {'LoanSizeGroup','LoanSize'};
+    idx_LoanSizeVar = ismember(varNames,LoanSizeVars);
+    if sum(idx_LoanSizeVar)>1
+        warningmsg = sprintf(['More than one possible "Loan Size" variable in the ' ...
+            'input table. The dimensions structure will use the default variable.\n']);
+        warning(warningmsg)
+    elseif sum(idx_LoanSizeVar) == 0
+        errormsg = sprintf(['The input table does not include a "Loan Size" variable. ' ...
+            'The dimensions structure will not be created.\n']);    
+        error(errormsg)
+    elseif sum(idx_LoanSizeVar) == 1
+        dimensions.LoanSize.distvar = varNames{idx_LoanSizeVar};
+    end
+else
+    dimensions.LoanSize.distvar = 'LoanSize';
+end
+
+
+% There is only one option for 'RiskCategories' dimension
+dimensions.RiskCategories.gridvar = 'RiskCategories';
+dimensions.RiskCategories.distvar = 'RiskCategories';
+
+
+% If the user provided a table, use the Term Categories Size option that is 
+% used in the table provided
+dimensions.TermCategories.gridvar = 'TermCategories';
+if useInput
+    TermVars = {'Term','TermMonths','TermCategories'};
+    idx_TermVar = ismember(varNames,TermVars);
+    if sum(idx_TermVar)>1
+        warningmsg = sprintf(['More than one possible "Term" variable in the ' ...
+            'input table. The dimensions structure will use the default variable.\n']);
+        warning(warningmsg)
+    elseif sum(idx_TermVar) == 0
+        errormsg = sprintf(['The input table does not include a "Term" variable. ' ...
+            'The dimensions structure will not be created.\n']);    
+        error(errormsg)
+    elseif sum(idx_TermVar) == 1
+        dimensions.TermCategories.distvar = varNames{idx_TermVar};
+    end
+else
+    dimensions.TermCategories.distvar = 'TermCategories';
+end
+
+
+
+
+% There is only one option for 'CollateralGroups' dimension
+dimensions.CollateralGroups.gridvar = 'CollateralGroups';
+dimensions.CollateralGroups.distvar = 'CollateralGroups';
+
+% There is only one option for 'IndustryGroups' dimension
+dimensions.IndustryGroups.gridvar = 'IndustryGroups';
+dimensions.IndustryGroups.distvar = 'IndustryGroups';
+
+% There is only one option for 'Geographies' dimension
+dimensions.Geographies.gridvar = 'Geographies';
+dimensions.Geographies.distvar = 'Geographies';
+
+
+
+
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

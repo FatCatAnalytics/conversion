@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>defRatesTab</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="defRatesTab.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [defRatesTab] = defRatesTab(varargin)
+<span class="comment">%UNTITLED Summary of this function goes here</span>
+<span class="comment">%   Detailed explanation goes here</span>
+
+
+<span class="comment">% Get any optional arguments and set properties accordingly</span>
+<span class="comment">% Set the input parser</span>
+p = inputParser;
+
+<span class="comment">% Get USE Variable (which may be input by the user)</span>
+defUSE = logical([0 0 0 1]');
+defmsg = sprintf([<span class="string">'Problem with the USE input. the '</span> <span class="keyword">...</span>
+    <span class="string">'description must be a logical vector'</span>]);
+addParameter(p,<span class="string">'USE'</span>,defUSE,<span class="keyword">...</span>
+    @(x)<span class="keyword">...</span>
+    assert(islogical(x),<span class="keyword">...</span>
+    defmsg)<span class="keyword">...</span>
+    );
+
+parse(p,varargin{:});
+USE_input = p.Results.USE;
+
+<span class="comment">% If the input value of USE is not a column, transpose it</span>
+<span class="keyword">if</span> size(USE_input,1)&gt;size(USE_input,2)
+    USE = USE_input;
+<span class="keyword">else</span>
+    USE = USE_input';
+<span class="keyword">end</span>
+
+
+<span class="comment">% Set variables includind default</span>
+Index = {<span class="string">'Fixed'</span>, <span class="string">'Libor'</span>,<span class="string">'Prime'</span>,<span class="string">'SOFR'</span>}';
+
+defRatesTab = [<span class="keyword">...</span>
+    array2table(Index,<span class="string">'VariableNames'</span>, {<span class="string">'Index'</span>}),<span class="keyword">...</span>
+    array2table(USE,<span class="string">'VariableNames'</span>, {<span class="string">'USE'</span>}),<span class="keyword">...</span>
+    array2table([{[0]},{[1;2;3;4;5;6;7;8;9]},{[10;11;12;13;14]},{[103;104;105;106;107;108;109]}]',<span class="string">'VariableNames'</span>,{<span class="string">'IndexIDs'</span>}),<span class="keyword">...</span>
+    array2table([1,2,2,2]',<span class="string">'VariableNames'</span>,{<span class="string">'PricingStructureIDs'</span>})];
+
+
+
+
+
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [defRatesTab] = defRatesTab(varargin)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+
+
+% Get any optional arguments and set properties accordingly
+% Set the input parser
+p = inputParser;
+
+% Get USE Variable (which may be input by the user)
+defUSE = logical([0 0 0 1]');
+defmsg = sprintf(['Problem with the USE input. the ' ...
+    'description must be a logical vector']);
+addParameter(p,'USE',defUSE,...
+    @(x)...
+    assert(islogical(x),...
+    defmsg)...
+    );
+
+parse(p,varargin{:});
+USE_input = p.Results.USE;
+
+% If the input value of USE is not a column, transpose it
+if size(USE_input,1)>size(USE_input,2)
+    USE = USE_input;
+else
+    USE = USE_input';
+end
+
+
+% Set variables includind default
+Index = {'Fixed', 'Libor','Prime','SOFR'}';
+
+defRatesTab = [...
+    array2table(Index,'VariableNames', {'Index'}),...
+    array2table(USE,'VariableNames', {'USE'}),...
+    array2table([{[0]},{[1;2;3;4;5;6;7;8;9]},{[10;11;12;13;14]},{[103;104;105;106;107;108;109]}]','VariableNames',{'IndexIDs'}),...
+    array2table([1,2,2,2]','VariableNames',{'PricingStructureIDs'})];
+
+
+
+
+
+end
+##### SOURCE END #####
+-->
+</body>
+</html>

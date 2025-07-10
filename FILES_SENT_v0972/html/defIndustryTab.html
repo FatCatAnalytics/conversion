@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>defIndustryTab</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-18">
+<meta name="DC.source" content="defIndustryTab.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> [IndustryGroup,IndustryTabFull] = defIndustryTab()
+    <span class="comment">% -------------------------------------------------------------</span>
+    <span class="comment">%</span>
+    <span class="comment">% defIndustryTab</span>
+    <span class="comment">%  set the default Industry Table property</span>
+    <span class="comment">%</span>
+    <span class="comment">%</span>
+    <span class="comment">%</span>
+    <span class="comment">%</span>
+    <span class="comment">% -------------------------------------------------------------</span>
+    NAICSTable = NAICStaxonomy();
+
+
+    NAICS2 = [11,21,22,53,54,62,71,92,31,32,33,44,45,23,42,48,49,51,52,55,56,61,72,81]';
+    GA_Group = [1,2,3,15,16,20,22,24,25,25,25,26,26,77,77,77,77,77,77,77,77,77,77,77]';
+
+    GA_Group = [1,1,1,1,1,1,1,1,1,1,1,1,1,77,77,77,77,77,77,77,77,77,77,77]';
+
+    ga_groups = unique(GA_Group);
+    GAIndustryGroup = categorical(strcat(<span class="string">"IND_"</span>,string(GA_Group)));
+    NAICS_descrip = NAICSTable.NAICSCategory;
+    IndustryTab = [array2table(NAICS2),array2table(GA_Group),array2table(GAIndustryGroup),array2table(NAICS_descrip)];
+
+    <span class="comment">% Build IND table</span>
+    IND = unique(IndustryTab(:,{<span class="string">'GA_Group'</span>,<span class="string">'GAIndustryGroup'</span>}));
+    <span class="keyword">for</span> n = 1:size(IND,1)
+
+
+
+    <span class="keyword">end</span>
+    assignin(<span class="string">"base"</span>,<span class="string">"IND"</span>,IND)
+
+    <span class="comment">% Initialize</span>
+    sz = [length(unique(GA_Group)),4];
+    vt = {<span class="string">'double'</span>,<span class="string">'categorical'</span>,<span class="string">'cell'</span>,<span class="string">'cell'</span>};
+    vn = {<span class="string">'IndGrpID'</span>,<span class="string">'IndGrpName'</span>,<span class="string">'NAICSIndustries'</span>,<span class="string">'NAICS2s'</span>};
+    IndustryGroup = table(<span class="string">'Size'</span>,sz,<span class="string">'VariableTypes'</span>,vt,<span class="string">'VariableNames'</span>,vn);
+
+    <span class="comment">% Create the default industry group table (for taxonomy tabs)</span>
+    <span class="keyword">for</span> g = 1:length(ga_groups)
+
+        grp = ga_groups(g);
+        idx_grp = IndustryTab.GA_Group == grp;
+        NAICS2s = IndustryTab.NAICS2(idx_grp);
+        industries = IndustryTab.NAICS_descrip(idx_grp);
+
+
+        IndustryGroup.IndGrpID(g) = g;
+        IndustryGroup.IndGrpName(g) = IndustryTab.GAIndustryGroup(g);
+        IndustryGroup.NAICSIndustries{g} = industries;
+        IndustryGroup.NAICS2s{g} = NAICS2s;
+
+    <span class="keyword">end</span>
+    IndustryGroup.IndGrpName = categorical(strcat(<span class="string">"GA_IndustryGrp_"</span>,num2str(IndustryGroup.IndGrpID)));
+
+    <span class="comment">% Create the full Industry table (for information and for the Grid</span>
+    <span class="comment">% Builder)</span>
+
+    AllNAICS2s = [];
+    AllNAICS2_Names = [];
+    <span class="keyword">for</span> i = 1:size(IndustryGroup,1)
+
+        ID = IndustryGroup.IndGrpID(i);
+        NAICS2s = IndustryGroup.NAICS2s{i,:};
+        AllNAICS2s = [AllNAICS2s;NAICS2s];
+
+        NAICS2Names = IndustryGroup.NAICSIndustries{i,:};
+        AllNAICS2_Names = [AllNAICS2_Names; NAICS2Names];
+
+    <span class="keyword">end</span>
+
+    IndustryTabFull = [array2table(AllNAICS2s,<span class="string">'VariableNames'</span>,{<span class="string">'NAICS2'</span>}),<span class="keyword">...</span>
+        array2table(AllNAICS2_Names,<span class="string">'VariableNames'</span>,{<span class="string">'Industry'</span>})];
+    IndustryTabFull.IndustryNAICS2 = categorical(strcat(<span class="keyword">...</span>
+        string(IndustryTabFull.Industry),<span class="string">"_"</span>,num2str(IndustryTabFull.NAICS2)));
+<span class="keyword">end</span>
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function [IndustryGroup,IndustryTabFull] = defIndustryTab()
+    % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    %
+    % defIndustryTab 
+    %  set the default Industry Table property
+    %
+    %
+    %
+    %
+    % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    NAICSTable = NAICStaxonomy();
+    
+    
+    NAICS2 = [11,21,22,53,54,62,71,92,31,32,33,44,45,23,42,48,49,51,52,55,56,61,72,81]';
+    GA_Group = [1,2,3,15,16,20,22,24,25,25,25,26,26,77,77,77,77,77,77,77,77,77,77,77]';
+
+    GA_Group = [1,1,1,1,1,1,1,1,1,1,1,1,1,77,77,77,77,77,77,77,77,77,77,77]';
+
+    ga_groups = unique(GA_Group);
+    GAIndustryGroup = categorical(strcat("IND_",string(GA_Group)));
+    NAICS_descrip = NAICSTable.NAICSCategory;
+    IndustryTab = [array2table(NAICS2),array2table(GA_Group),array2table(GAIndustryGroup),array2table(NAICS_descrip)];
+    
+    % Build IND table
+    IND = unique(IndustryTab(:,{'GA_Group','GAIndustryGroup'}));
+    for n = 1:size(IND,1)
+
+
+
+    end
+    assignin("base","IND",IND)
+    
+    % Initialize
+    sz = [length(unique(GA_Group)),4];
+    vt = {'double','categorical','cell','cell'};
+    vn = {'IndGrpID','IndGrpName','NAICSIndustries','NAICS2s'};
+    IndustryGroup = table('Size',sz,'VariableTypes',vt,'VariableNames',vn);
+    
+    % Create the default industry group table (for taxonomy tabs)
+    for g = 1:length(ga_groups)
+    
+        grp = ga_groups(g);
+        idx_grp = IndustryTab.GA_Group == grp;
+        NAICS2s = IndustryTab.NAICS2(idx_grp);
+        industries = IndustryTab.NAICS_descrip(idx_grp);
+        
+        
+        IndustryGroup.IndGrpID(g) = g;
+        IndustryGroup.IndGrpName(g) = IndustryTab.GAIndustryGroup(g);
+        IndustryGroup.NAICSIndustries{g} = industries;
+        IndustryGroup.NAICS2s{g} = NAICS2s;
+
+    end
+    IndustryGroup.IndGrpName = categorical(strcat("GA_IndustryGrp_",num2str(IndustryGroup.IndGrpID)));
+
+    % Create the full Industry table (for information and for the Grid
+    % Builder)
+
+    AllNAICS2s = [];
+    AllNAICS2_Names = [];
+    for i = 1:size(IndustryGroup,1)
+
+        ID = IndustryGroup.IndGrpID(i);
+        NAICS2s = IndustryGroup.NAICS2s{i,:};
+        AllNAICS2s = [AllNAICS2s;NAICS2s];
+
+        NAICS2Names = IndustryGroup.NAICSIndustries{i,:};
+        AllNAICS2_Names = [AllNAICS2_Names; NAICS2Names];
+
+    end
+
+    IndustryTabFull = [array2table(AllNAICS2s,'VariableNames',{'NAICS2'}),...
+        array2table(AllNAICS2_Names,'VariableNames',{'Industry'})];
+    IndustryTabFull.IndustryNAICS2 = categorical(strcat(...
+        string(IndustryTabFull.Industry),"_",num2str(IndustryTabFull.NAICS2)));
+end
+##### SOURCE END #####
+-->
+</body>
+</html>
